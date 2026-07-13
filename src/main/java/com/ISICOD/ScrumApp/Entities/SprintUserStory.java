@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "sprint_user_story")
@@ -19,10 +20,15 @@ public class SprintUserStory {
     private Integer id;
 
     @Column(name = "estimation_finale")
-    private LocalDateTime estimationFinale;
+    private Integer estimationFinale;
 
     @Column(name = "commit_a")
     private LocalDateTime commitA;
+
+    @PrePersist
+    public void prePresist(){
+        this.commitA = LocalDateTime.now();
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -41,4 +47,10 @@ public class SprintUserStory {
     @ManyToOne
     @JoinColumn(name = "user_story_id", nullable = false)
     private UserStory userStory;
+
+    @OneToMany( mappedBy = "sprintUserStory")
+    private List<DailyContent> dailyContents;
+
+    @OneToMany(mappedBy = "sprintUserStory")
+    private List<SelectionUserStorySession> selectionUserStorySessions;
 }

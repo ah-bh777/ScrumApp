@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceDashboardDTO;
 import com.ISICOD.ScrumApp.Entities.Espace;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface EspaceService {
     Espace updateEspace(Integer id, Espace espace);
 
     void deleteEspace(Integer id);
+
+    EspaceDashboardDTO getDashboard(Integer espaceId);
 }

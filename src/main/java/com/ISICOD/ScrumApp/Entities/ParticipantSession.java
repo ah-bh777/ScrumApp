@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Entities;
 
 import com.ISICOD.ScrumApp.Enums.RoleEspace;
+import com.ISICOD.ScrumApp.Enums.RoleSession;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,7 @@ public class ParticipantSession {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role_session", nullable = false)
-    private RoleEspace roleSession;
+    private RoleSession roleSession;
 
     @ManyToOne
     @JoinColumn(name = "utilisateur_id", nullable = true)

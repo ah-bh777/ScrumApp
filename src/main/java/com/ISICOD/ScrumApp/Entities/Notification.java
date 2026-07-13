@@ -30,7 +30,6 @@ public class Notification {
         }
     }
 
-
     @Column(name = "lu_a")
     private LocalDateTime luA;
 

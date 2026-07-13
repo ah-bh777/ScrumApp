@@ -25,11 +25,12 @@ public class SelectionUserStorySession {
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
-    @ManyToOne
-    @JoinColumn(name = "user_story_id", nullable = false)
-    private UserStory userStory;
 
     @OneToMany(mappedBy = "selectionUserStorySession")
     private List<TourEstimation> tourEstimations;
+
+    @ManyToOne
+    @JoinColumn(name = "sprint_user_story_id", nullable = false)
+    private SprintUserStory sprintUserStory;
 
 }

@@ -3,6 +3,7 @@ package com.ISICOD.ScrumApp.Entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,6 +29,13 @@ public class TourEstimation {
 
     @Column(name = "cree_a")
     private LocalDateTime creeA;
+
+    @PrePersist
+    public void prePersist() {
+        if (creeA == null) {
+            creeA = LocalDateTime.now();
+        }
+    }
 
     @ManyToOne
     @JoinColumn(name = "selection_user_story_session_id", nullable = false)

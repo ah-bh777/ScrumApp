@@ -43,7 +43,6 @@ public class Sprint {
     @OneToMany(mappedBy = "sprint")
     private List<SprintUserStory> sprintUserStories;
 
-
     @OneToMany(mappedBy = "sprint")
     private List<Session> sessions;
 }

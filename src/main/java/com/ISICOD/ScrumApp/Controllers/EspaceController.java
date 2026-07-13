@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceDashboardDTO;
 import com.ISICOD.ScrumApp.Entities.Espace;
 import com.ISICOD.ScrumApp.Services.EspaceService;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +59,14 @@ public class EspaceController {
         espaceService.deleteEspace(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/dashboard")
+    public ResponseEntity<EspaceDashboardDTO> getDashboard(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                espaceService.getDashboard(id)
+        );
     }
 }

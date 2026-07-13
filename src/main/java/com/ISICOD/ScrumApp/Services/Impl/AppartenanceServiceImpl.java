@@ -66,4 +66,7 @@ public class AppartenanceServiceImpl implements AppartenanceService {
 
         appartenanceRepository.delete(appartenance);
     }
+
+
+
 }

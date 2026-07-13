@@ -51,8 +51,10 @@ public class SelectionUserStorySessionServiceImpl
             existing.setSession(selection.getSession());
         }
 
-        if (selection.getUserStory() != null) {
-            existing.setUserStory(selection.getUserStory());
+        if(selection.getSprintUserStory()!=null){
+            existing.setSprintUserStory(
+                    selection.getSprintUserStory()
+            );
         }
 
         return repository.save(existing);

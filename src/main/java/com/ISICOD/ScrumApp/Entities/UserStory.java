@@ -40,7 +40,5 @@ public class UserStory {
     @OneToMany(mappedBy = "userStory")
     private List<SprintUserStory> sprintUserStories;
 
-    @OneToMany(mappedBy = "userStory")
-    private List<SelectionUserStorySession> selections;
 
 }

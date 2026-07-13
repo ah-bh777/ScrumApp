@@ -1,8 +1,12 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.Daily.DailySessionDTO;
 import com.ISICOD.ScrumApp.Entities.DailyContent;
 
+import com.ISICOD.ScrumApp.Entities.Session;
 import com.ISICOD.ScrumApp.Repositories.DailyContentRepository;
+import com.ISICOD.ScrumApp.Repositories.SessionRepository;
+import com.ISICOD.ScrumApp.Services.Builders.DailyBuilder;
 import com.ISICOD.ScrumApp.Services.DailyContentService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,11 @@ import java.util.Optional;
 public class DailyContentServiceImpl implements DailyContentService {
 
     private final DailyContentRepository dailyContentRepository;
+
+    private final SessionRepository sessionRepository;
+
+    private final DailyBuilder dailyBuilder;
+
 
     @Override
     public DailyContent createDailyContent(DailyContent dailyContent) {
@@ -71,4 +80,17 @@ public class DailyContentServiceImpl implements DailyContentService {
 
         dailyContentRepository.delete(existing);
     }
+
+    @Override
+    public DailySessionDTO getDailySession(Integer sessionId) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Session introuvable avec id : " + sessionId));
+
+        return dailyBuilder.build(session);
+    }
+
+
 }

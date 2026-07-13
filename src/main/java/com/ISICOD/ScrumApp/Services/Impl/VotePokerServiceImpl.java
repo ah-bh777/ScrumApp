@@ -1,7 +1,11 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.Poker.PokerSessionDTO;
+import com.ISICOD.ScrumApp.Entities.Session;
 import com.ISICOD.ScrumApp.Entities.VotePoker;
+import com.ISICOD.ScrumApp.Repositories.SessionRepository;
 import com.ISICOD.ScrumApp.Repositories.VotePokerRepository;
+import com.ISICOD.ScrumApp.Services.Builders.PokerBuilder;
 import com.ISICOD.ScrumApp.Services.VotePokerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,10 @@ import java.util.Optional;
 public class VotePokerServiceImpl implements VotePokerService {
 
     private final VotePokerRepository votePokerRepository;
+
+    private final SessionRepository sessionRepository;
+
+    private final PokerBuilder pokerBuilder;
 
     @Override
     public VotePoker createVotePoker(VotePoker votePoker) {
@@ -72,5 +80,16 @@ public class VotePokerServiceImpl implements VotePokerService {
                         new RuntimeException("VotePoker introuvable avec id : " + id));
 
         votePokerRepository.delete(existing);
+    }
+
+    @Override
+    public PokerSessionDTO getPokerSession(Integer sessionId) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Session introuvable avec id : " + sessionId));
+
+        return pokerBuilder.build(session);
     }
 }

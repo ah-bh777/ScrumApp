@@ -79,4 +79,5 @@ public class DailyContentController {
                 .noContent()
                 .build();
     }
+    
 }

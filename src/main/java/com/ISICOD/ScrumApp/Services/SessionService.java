@@ -1,5 +1,7 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Daily.DailySessionDTO;
+import com.ISICOD.ScrumApp.DTOs.Session.SessionDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Session;
 
 import java.util.List;
@@ -16,4 +18,8 @@ public interface SessionService {
     Session updateSession(Integer id, Session session);
 
     void deleteSession(Integer id);
+
+    SessionDetailsDTO getSessionDetails(Integer sessionId);
+
+    // DailySessionDTO getDailySession(Integer sessionId);
 }

@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Poker.PokerSessionDTO;
 import com.ISICOD.ScrumApp.Entities.VotePoker;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface VotePokerService {
     VotePoker updateVotePoker(Integer id, VotePoker votePoker);
 
     void deleteVotePoker(Integer id);
+
+    PokerSessionDTO getPokerSession(Integer sessionId);
 }

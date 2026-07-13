@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.ActionItem.ActionItemDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.ActionItem;
 import com.ISICOD.ScrumApp.Services.ActionItemService;
 import lombok.RequiredArgsConstructor;
@@ -75,5 +76,14 @@ public class ActionItemController {
         actionItemService.deleteActionItem(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ActionItemDetailsDTO> getActionItemDetails(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                actionItemService.getActionItemDetails(id)
+        );
     }
 }

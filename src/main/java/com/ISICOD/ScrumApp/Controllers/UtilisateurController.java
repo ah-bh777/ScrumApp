@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.Utilisateur.*;
 import com.ISICOD.ScrumApp.Entities.Utilisateur;
 import com.ISICOD.ScrumApp.Services.UtilisateurService;
 import lombok.RequiredArgsConstructor;
@@ -69,4 +70,67 @@ public class UtilisateurController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/Espaces")
+    public ResponseEntity<List<UtilisateurEspaceDTO>> getEspaces(@PathVariable Integer id){
+        return ResponseEntity.ok(utilisateurService.getUtilisateursEspace(id));
+    }
+
+    @GetMapping("/{id}/invitations")
+    public ResponseEntity<List<UtilisateurInvitationDTO>> getInvitationsByUtilisateur(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                utilisateurService.getInvitationByUtilisateur(id)
+        );
+    }
+
+    @GetMapping("/{id}/notifications")
+    public ResponseEntity<List<UtilisateurNotificationDTO>> getNotificationsByUtilisateur(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                utilisateurService.getNotificationsByUtilisateur(id)
+        );
+    }
+
+    @GetMapping("/{id}/sessions")
+    public ResponseEntity<List<UtilisateurSessionDTO>>
+    getSessionsByUtilisateur(
+            @PathVariable Integer id){
+
+        return ResponseEntity.ok(
+                utilisateurService
+                        .getSessionsByUtilisateur(id)
+        );
+    }
+
+    @GetMapping("/{id}/daily-contents")
+    public ResponseEntity<List<UtilisateurDailyContentDTO>>
+    getDailyContentsByUtilisateur(
+            @PathVariable Integer id){
+
+        return ResponseEntity.ok(
+                utilisateurService.getDailyContentsByUtilisateur(id)
+        );
+    }
+
+    @GetMapping("/{id}/retro")
+    public ResponseEntity<UtilisateurRetroDTO> getRetroByUtilisateur(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                utilisateurService.getRetroByUtilisateur(id)
+        );
+    }
+
+    @GetMapping("/{id}/poker")
+    public ResponseEntity<UtilisateurPokerDTO> getPokerByUtilisateur(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                utilisateurService.getPokerByUtilisateur(id)
+        );
+    }
+
 }

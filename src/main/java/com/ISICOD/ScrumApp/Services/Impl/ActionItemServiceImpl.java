@@ -1,5 +1,9 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.ActionItem.ActionItemDetailsDTO;
+import com.ISICOD.ScrumApp.DTOs.ActionItem.NotificationResumeDTO;
+import com.ISICOD.ScrumApp.DTOs.ActionItem.SessionResumeDTO;
+import com.ISICOD.ScrumApp.DTOs.ActionItem.UtilisateurResumeDTO;
 import com.ISICOD.ScrumApp.Entities.ActionItem;
 import com.ISICOD.ScrumApp.Repositories.ActionItemRepository;
 import com.ISICOD.ScrumApp.Services.ActionItemService;
@@ -85,5 +89,71 @@ public class ActionItemServiceImpl implements ActionItemService {
                         new RuntimeException("ActionItem introuvable avec id : " + id));
 
         actionItemRepository.delete(actionItem);
+    }
+
+
+    @Override
+    public ActionItemDetailsDTO getActionItemDetails(Integer id) {
+
+        ActionItem actionItem = actionItemRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("ActionItem introuvable avec id : " + id));
+
+        return ActionItemDetailsDTO.builder()
+
+                // Action Item
+                .id(actionItem.getId())
+                .titre(actionItem.getTitre())
+                .description(actionItem.getDescription())
+                .echeance(actionItem.getEcheance())
+                .status(actionItem.getStatus())
+                .creeA(actionItem.getCreeA())
+
+                // Creator
+                .createur(
+                        UtilisateurResumeDTO.builder()
+                                .id(actionItem.getCreateur().getId())
+                                .nom(actionItem.getCreateur().getNom())
+                                .prenom(actionItem.getCreateur().getPrenom())
+                                .email(actionItem.getCreateur().getEmail())
+                                .build()
+                )
+
+                // Assigned user (can be null)
+                .assigneA(
+                        actionItem.getAssigneA() == null
+                                ? null
+                                : UtilisateurResumeDTO.builder()
+                                .id(actionItem.getAssigneA().getId())
+                                .nom(actionItem.getAssigneA().getNom())
+                                .prenom(actionItem.getAssigneA().getPrenom())
+                                .email(actionItem.getAssigneA().getEmail())
+                                .build()
+                )
+
+                // Session
+                .session(
+                        SessionResumeDTO.builder()
+                                .id(actionItem.getSession().getId())
+                                .commenceA(actionItem.getSession().getCommenceA())
+                                .termineA(actionItem.getSession().getTermineA())
+                                .status(actionItem.getSession().getStatus())
+                                .build()
+                )
+
+                // Notifications
+                .notifications(
+                        actionItem.getNotifications()
+                                .stream()
+                                .map(notification -> NotificationResumeDTO.builder()
+                                        .id(notification.getId())
+                                        .description(notification.getDescription())
+                                        .envoyeA(notification.getEnvoyeA())
+                                        .luA(notification.getLuA())
+                                        .build())
+                                .toList()
+                )
+
+                .build();
     }
 }

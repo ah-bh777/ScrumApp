@@ -16,4 +16,7 @@ public interface NotificationService {
     Notification updateNotification(Integer id, Notification notification);
 
     void deleteNotification(Integer id);
+
+    
+
 }

@@ -1,7 +1,11 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.Retro.RetroSessionDTO;
 import com.ISICOD.ScrumApp.Entities.EtatRetro;
+import com.ISICOD.ScrumApp.Entities.Session;
 import com.ISICOD.ScrumApp.Repositories.EtatRetroRepository;
+import com.ISICOD.ScrumApp.Repositories.SessionRepository;
+import com.ISICOD.ScrumApp.Services.Builders.RetroBuilder;
 import com.ISICOD.ScrumApp.Services.EtatRetroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,12 @@ import java.util.Optional;
 public class EtatRetroServiceImpl implements EtatRetroService {
 
     private final EtatRetroRepository repository;
+
+    private final SessionRepository sessionRepository;
+
+    private final RetroBuilder retroBuilder;
+
+
 
     @Override
     public EtatRetro create(EtatRetro etatRetro) {
@@ -68,5 +78,16 @@ public class EtatRetroServiceImpl implements EtatRetroService {
                         new RuntimeException("EtatRetro introuvable avec id : " + id));
 
         repository.delete(etatRetro);
+    }
+
+    @Override
+    public RetroSessionDTO getRetroSession(Integer sessionId) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Session introuvable avec id : " + sessionId));
+
+        return retroBuilder.build(session);
     }
 }

@@ -1,7 +1,15 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.Daily.DailySessionDTO;
+import com.ISICOD.ScrumApp.DTOs.Poker.PokerSessionDTO;
+import com.ISICOD.ScrumApp.DTOs.Retro.RetroSessionDTO;
+import com.ISICOD.ScrumApp.DTOs.Session.SessionDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Session;
+import com.ISICOD.ScrumApp.Repositories.SessionRepository;
+import com.ISICOD.ScrumApp.Services.Builders.RetroBuilder;
+import com.ISICOD.ScrumApp.Services.DailyContentService;
 import com.ISICOD.ScrumApp.Services.SessionService;
+import com.ISICOD.ScrumApp.Services.VotePokerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +25,15 @@ import java.util.Map;
 public class SessionController {
 
     private final SessionService sessionService;
+
+    private final DailyContentService dailyContentService;
+
+    private final VotePokerService votePokerService;
+
+    private final SessionRepository sessionRepository;
+
+    private final RetroBuilder retroBuilder;
+
 
     @PostMapping
     public ResponseEntity<Session> createSession(
@@ -114,6 +131,44 @@ public class SessionController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(error);
         }
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<SessionDetailsDTO> getSessionDetails(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                sessionService.getSessionDetails(id)
+        );
+    }
+
+    @GetMapping("/{sessionId}/daily")
+    public ResponseEntity<DailySessionDTO> getDailySession(
+            @PathVariable Integer sessionId) {
+
+        return ResponseEntity.ok(
+                dailyContentService.getDailySession(sessionId)
+        );
+    }
+
+    @GetMapping("/{sessionId}/poker")
+    public ResponseEntity<PokerSessionDTO> getPokerSession(
+            @PathVariable Integer sessionId) {
+
+        return ResponseEntity.ok(
+                votePokerService.getPokerSession(sessionId)
+        );
+    }
+
+    @Override
+    public RetroSessionDTO getRetroSession(Integer sessionId) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Session introuvable avec id : " + sessionId));
+
+        return retroBuilder.build(session);
     }
 
 }

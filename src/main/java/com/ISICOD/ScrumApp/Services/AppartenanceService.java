@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Services;
 
 import com.ISICOD.ScrumApp.Entities.Appartenance;
+import com.ISICOD.ScrumApp.Entities.Utilisateur;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,5 +17,6 @@ public interface AppartenanceService {
     Appartenance updateAppartenance(Integer id, Appartenance appartenance);
 
     void deleteAppartenance(Integer id);
+
 
 }

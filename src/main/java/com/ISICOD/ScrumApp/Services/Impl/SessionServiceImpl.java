@@ -1,7 +1,14 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.Session.ConfigurationDTO;
+import com.ISICOD.ScrumApp.DTOs.Session.ParticipantDTO;
+import com.ISICOD.ScrumApp.DTOs.Session.SessionDetailsDTO;
+import com.ISICOD.ScrumApp.DTOs.Session.SprintDTO;
+import com.ISICOD.ScrumApp.Entities.Appartenance;
 import com.ISICOD.ScrumApp.Entities.Session;
-import com.ISICOD.ScrumApp.Repositories.SessionRepository;
+import com.ISICOD.ScrumApp.Entities.Sprint;
+import com.ISICOD.ScrumApp.Repositories.*;
+import com.ISICOD.ScrumApp.Services.Builders.SessionDetailsBuilder;
 import com.ISICOD.ScrumApp.Services.SessionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +21,8 @@ import java.util.Optional;
 public class SessionServiceImpl implements SessionService {
 
     private final SessionRepository sessionRepository;
+
+    private final SessionDetailsBuilder sessionDetailsBuilder;
 
     @Override
     public Session createSession(Session session) {
@@ -37,34 +46,26 @@ public class SessionServiceImpl implements SessionService {
                 .orElseThrow(() ->
                         new RuntimeException("Session introuvable avec id : " + id));
 
-
-        if (session.getCommenceA() != null) {
+        if (session.getCommenceA() != null)
             existing.setCommenceA(session.getCommenceA());
-        }
 
-        if (session.getTermineA() != null) {
+        if (session.getTermineA() != null)
             existing.setTermineA(session.getTermineA());
-        }
 
-        if (session.getStatus() != null) {
+        if (session.getStatus() != null)
             existing.setStatus(session.getStatus());
-        }
 
-        if (session.getCreaA() != null) {
+        if (session.getCreaA() != null)
             existing.setCreaA(session.getCreaA());
-        }
 
-        if (session.getEspace() != null) {
+        if (session.getEspace() != null)
             existing.setEspace(session.getEspace());
-        }
 
-        if (session.getSprint() != null) {
+        if (session.getSprint() != null)
             existing.setSprint(session.getSprint());
-        }
 
-        if (session.getTypeSession() != null) {
+        if (session.getTypeSession() != null)
             existing.setTypeSession(session.getTypeSession());
-        }
 
         return sessionRepository.save(existing);
     }
@@ -77,5 +78,16 @@ public class SessionServiceImpl implements SessionService {
                         new RuntimeException("Session introuvable avec id : " + id));
 
         sessionRepository.delete(session);
+    }
+
+    @Override
+    public SessionDetailsDTO getSessionDetails(Integer sessionId) {
+
+        Session session = sessionRepository.findById(sessionId)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Session introuvable avec id : " + sessionId));
+
+        return sessionDetailsBuilder.build(session);
     }
 }

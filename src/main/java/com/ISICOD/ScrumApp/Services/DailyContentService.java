@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Daily.DailySessionDTO;
 import com.ISICOD.ScrumApp.Entities.DailyContent;
 
 import java.util.List;
@@ -16,5 +17,9 @@ public interface DailyContentService {
     DailyContent updateDailyContent(Integer id, DailyContent dailyContent);
 
     void deleteDailyContent(Integer id);
+
+    DailySessionDTO getDailySession(Integer sessionId);
+
+
 
 }

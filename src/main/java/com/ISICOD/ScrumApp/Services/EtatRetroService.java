@@ -1,5 +1,7 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Retro.RetroSessionDTO;
+
 import com.ISICOD.ScrumApp.Entities.EtatRetro;
 
 import java.util.List;
@@ -16,4 +18,6 @@ public interface EtatRetroService {
     EtatRetro update(Integer id, EtatRetro etatRetro);
 
     void delete(Integer id);
+
+    RetroSessionDTO getRetroSession(Integer sessionId);
 }

@@ -27,6 +27,13 @@ public class Sprint {
     @Column(name = "commence_de")
     private LocalDateTime commFinanceDeDate;
 
+    @PrePersist
+    private void persist(){
+        if(this.commFinanceDeDate == null){
+            this.commFinanceDeDate = LocalDateTime.now();
+        }
+    }
+
     @Column(name = "termine_a")
     private LocalDateTime termineA;
 

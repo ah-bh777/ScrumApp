@@ -48,4 +48,5 @@ public class VotePoker {
     @JoinColumn(name = "tour_estimation_id", nullable = false)
     private TourEstimation tourEstimation;
 
+
 }

@@ -16,8 +16,6 @@ public class EspaceServiceImpl implements EspaceService {
 
     private final EspaceRepository espaceRepository;
 
-
-
     @Override
     public Espace createEspace(Espace espace) {
         return espaceRepository.save(espace);

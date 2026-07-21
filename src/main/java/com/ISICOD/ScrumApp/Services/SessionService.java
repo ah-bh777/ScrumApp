@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Services;
 
 import com.ISICOD.ScrumApp.DTOs.Daily.DailySessionDTO;
+import com.ISICOD.ScrumApp.DTOs.Retro.RetroSessionDTO;
 import com.ISICOD.ScrumApp.DTOs.Session.SessionDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Session;
 
@@ -21,5 +22,7 @@ public interface SessionService {
 
     SessionDetailsDTO getSessionDetails(Integer sessionId);
 
-    // DailySessionDTO getDailySession(Integer sessionId);
+    DailySessionDTO getDailySession(Integer sessionId);
+
+    public RetroSessionDTO getRetroSession(Integer sessionId);
 }

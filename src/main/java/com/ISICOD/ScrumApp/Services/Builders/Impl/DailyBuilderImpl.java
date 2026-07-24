@@ -8,6 +8,7 @@ import com.ISICOD.ScrumApp.DTOs.Daily.UserStoryDailyDTO;
 
 import com.ISICOD.ScrumApp.Entities.*;
 import com.ISICOD.ScrumApp.Services.Builders.DailyBuilder;
+import com.ISICOD.ScrumApp.Services.Builders.SessionOptionBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class DailyBuilderImpl implements DailyBuilder {
+
+    private final SessionOptionBuilder sessionOptionBuilder;
 
     @Override
     public DailySessionDTO build(Session session) {
@@ -42,6 +45,10 @@ public class DailyBuilderImpl implements DailyBuilder {
 
                 .sprintTitre(
                         session.getSprint().getTitre()
+                )
+
+                .options(
+                        sessionOptionBuilder.build(session.getConfigurations())
                 )
 
                 .dailyContents(dailyContents)
@@ -134,9 +141,6 @@ public class DailyBuilderImpl implements DailyBuilder {
                         sprintUserStory.getStatut()
                 )
 
-                .retenue(
-                        sprintUserStory.getRetenue()
-                )
 
                 .estimationFinale(
                         sprintUserStory.getEstimationFinale()

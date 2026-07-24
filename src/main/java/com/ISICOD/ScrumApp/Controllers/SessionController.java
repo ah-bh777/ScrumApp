@@ -156,5 +156,13 @@ public class SessionController {
         );
     }
 
+    @GetMapping("/{sessionId}/retro")
+    public ResponseEntity<RetroSessionDTO> getRetroSession(
+            @PathVariable Integer sessionId) {
 
+        return ResponseEntity.ok(
+                sessionService.getRetroSession(sessionId)
+        );
+    }
+    
 }

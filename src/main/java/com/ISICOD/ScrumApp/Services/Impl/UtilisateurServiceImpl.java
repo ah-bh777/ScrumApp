@@ -497,7 +497,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 
                                     .sprintUserStoryId(sprintUserStory.getId())
-                                    .retenue(sprintUserStory.getRetenue())
+
                                     .statutSprintUserStory(
                                             sprintUserStory.getStatut()
                                     )

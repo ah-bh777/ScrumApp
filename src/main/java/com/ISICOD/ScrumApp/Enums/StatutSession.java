@@ -1,7 +1,7 @@
 package com.ISICOD.ScrumApp.Enums;
 
 public enum StatutSession {
-    CREEE,
+    CREE,
     ACTIVE,
     EN_PAUSE,
     TERMINEE,

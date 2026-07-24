@@ -130,7 +130,6 @@ public class EspaceServiceImpl implements EspaceService {
 
                                                     .sprintUserStoryId(sus.getId())
 
-                                                    .retenue(sus.getRetenue())
 
                                                     .estimationFinale(
                                                             sus.getEstimationFinale()

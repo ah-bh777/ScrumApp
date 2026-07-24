@@ -1,7 +1,9 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
+import com.ISICOD.ScrumApp.DTOs.Sprint.SprintDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Sprint;
 import com.ISICOD.ScrumApp.Repositories.SprintRepository;
+import com.ISICOD.ScrumApp.Services.Builders.SprintBuilder;
 import com.ISICOD.ScrumApp.Services.SprintService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import java.util.Optional;
 public class SprintServiceImpl implements SprintService {
 
     private final SprintRepository sprintRepository;
+
+    private final SprintBuilder sprintBuilder;
 
     @Override
     public Sprint createSprint(Sprint sprint) {
@@ -76,5 +80,15 @@ public class SprintServiceImpl implements SprintService {
                         new RuntimeException("Sprint introuvable avec id : " + id));
 
         sprintRepository.delete(sprint);
+    }
+
+    @Override
+    public SprintDetailsDTO getSprintDetails(Integer sprintId) {
+
+        Sprint sprint = sprintRepository.findById(sprintId)
+                .orElseThrow(() ->
+                        new RuntimeException("Sprint introuvable avec id : " + sprintId));
+
+        return sprintBuilder.build(sprint);
     }
 }

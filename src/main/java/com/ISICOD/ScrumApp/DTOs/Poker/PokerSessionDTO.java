@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Poker;
 
+import com.ISICOD.ScrumApp.DTOs.Common.SessionOptionDTO;
 import com.ISICOD.ScrumApp.Enums.StatutSession;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class PokerSessionDTO {
     private Integer sprintId;
 
     private String sprintTitre;
+
+    private List<SessionOptionDTO> options;
 
     private List<SelectionPokerDTO> selections;
 }

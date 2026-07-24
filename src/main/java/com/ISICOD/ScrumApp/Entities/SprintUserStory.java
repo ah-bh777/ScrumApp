@@ -37,8 +37,6 @@ public class SprintUserStory {
     @Column(name = "termine_a")
     private LocalDateTime termineA;
 
-    @Column(nullable = false)
-    private Boolean retenue;
 
     @ManyToOne
     @JoinColumn(name = "sprint_id", nullable = false)

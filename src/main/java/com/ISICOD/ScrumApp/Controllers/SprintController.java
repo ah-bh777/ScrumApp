@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.Sprint.SprintDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Sprint;
 import com.ISICOD.ScrumApp.Services.SprintService;
 import lombok.RequiredArgsConstructor;
@@ -116,5 +117,14 @@ public class SprintController {
                     .status(HttpStatus.NOT_FOUND)
                     .body(error);
         }
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<SprintDetailsDTO> getSprintDetails(
+            @PathVariable Integer id) {
+
+        return ResponseEntity.ok(
+                sprintService.getSprintDetails(id)
+        );
     }
 }

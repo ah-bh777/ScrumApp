@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Sprint.SprintDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Sprint;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface SprintService {
     Sprint updateSprint(Integer id, Sprint sprint);
 
     void deleteSprint(Integer id);
+
+    SprintDetailsDTO getSprintDetails(Integer sprintId);
 }

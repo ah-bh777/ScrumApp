@@ -54,10 +54,6 @@ public class SprintUserStoryServiceImpl implements SprintUserStoryService {
             existing.setTermineA(sprintUserStory.getTermineA());
         }
 
-        if (sprintUserStory.getRetenue() != null) {
-            existing.setRetenue(sprintUserStory.getRetenue());
-        }
-
         if (sprintUserStory.getSprint() != null) {
             existing.setSprint(sprintUserStory.getSprint());
         }

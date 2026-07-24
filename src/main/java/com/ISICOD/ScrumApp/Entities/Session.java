@@ -29,7 +29,7 @@ public class Session {
     @Column(nullable = false)
     private StatutSession status;
 
-    @Column(name = "crea_a", nullable = false)
+    @Column(name = "cree_a", nullable = false)
     private LocalDateTime creaA;
 
     @ManyToOne

@@ -30,10 +30,6 @@ public class SessionController {
 
     private final VotePokerService votePokerService;
 
-    private final SessionRepository sessionRepository;
-
-    private final RetroBuilder retroBuilder;
-
 
     @PostMapping
     public ResponseEntity<Session> createSession(
@@ -160,15 +156,13 @@ public class SessionController {
         );
     }
 
-    @Override
-    public RetroSessionDTO getRetroSession(Integer sessionId) {
+    @GetMapping("/{sessionId}/retro")
+    public ResponseEntity<RetroSessionDTO> getRetroSession(
+            @PathVariable Integer sessionId) {
 
-        Session session = sessionRepository.findById(sessionId)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Session introuvable avec id : " + sessionId));
-
-        return retroBuilder.build(session);
+        return ResponseEntity.ok(
+                sessionService.getRetroSession(sessionId)
+        );
     }
-
+    
 }

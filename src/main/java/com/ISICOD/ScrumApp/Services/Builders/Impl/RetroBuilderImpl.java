@@ -4,6 +4,7 @@ import com.ISICOD.ScrumApp.DTOs.Retro.*;
 import com.ISICOD.ScrumApp.DTOs.Retro.ActionItemRetroDTO;
 import com.ISICOD.ScrumApp.Entities.*;
 import com.ISICOD.ScrumApp.Services.Builders.RetroBuilder;
+import com.ISICOD.ScrumApp.Services.Builders.SessionOptionBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RetroBuilderImpl implements RetroBuilder {
+
+    private final SessionOptionBuilder sessionOptionBuilder;
 
     @Override
     public RetroSessionDTO build(Session session) {
@@ -48,6 +51,10 @@ public class RetroBuilderImpl implements RetroBuilder {
                 .groupes(groupes)
 
                 .actionItems(actionItems)
+
+                .options(
+                        sessionOptionBuilder.build(session.getConfigurations())
+                )
 
                 .build();
     }

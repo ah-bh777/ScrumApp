@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Retro;
 
+import com.ISICOD.ScrumApp.DTOs.Common.SessionOptionDTO;
 import com.ISICOD.ScrumApp.Enums.StatutSession;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,8 @@ public class RetroSessionDTO {
     private EtatRetroDTO etatRetro;
 
     private List<GroupeRetroDTO> groupes;
+
+    private List<SessionOptionDTO> options;
 
     private List<com.ISICOD.ScrumApp.DTOs.Retro.ActionItemRetroDTO> actionItems;
 }

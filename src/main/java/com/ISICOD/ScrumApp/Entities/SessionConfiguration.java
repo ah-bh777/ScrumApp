@@ -25,4 +25,5 @@ public class SessionConfiguration {
     @ManyToOne
     @JoinColumn(name = "fonctionalite_id" , nullable = false)
     private Fonctionnalite fonctionnalite ;
+
 }

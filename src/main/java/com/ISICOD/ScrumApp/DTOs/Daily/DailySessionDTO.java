@@ -1,6 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Daily;
 
-import com.ISICOD.ScrumApp.DTOs.Daily.DailyContentDTO;
+import com.ISICOD.ScrumApp.DTOs.Common.SessionOptionDTO;
 import com.ISICOD.ScrumApp.Enums.StatutSession;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +27,8 @@ public class DailySessionDTO {
     private Integer sprintId;
 
     private String sprintTitre;
+
+    private List<SessionOptionDTO> options;
 
     private List<DailyContentDTO> dailyContents;
 }

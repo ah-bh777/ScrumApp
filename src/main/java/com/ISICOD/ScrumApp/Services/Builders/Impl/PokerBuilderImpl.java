@@ -3,25 +3,46 @@ package com.ISICOD.ScrumApp.Services.Builders.Impl;
 import com.ISICOD.ScrumApp.DTOs.Poker.*;
 import com.ISICOD.ScrumApp.Entities.*;
 import com.ISICOD.ScrumApp.Services.Builders.PokerBuilder;
+import com.ISICOD.ScrumApp.Services.Builders.SessionOptionBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PokerBuilderImpl implements PokerBuilder {
 
+    private final SessionOptionBuilder sessionOptionBuilder;
+
     @Override
     public PokerSessionDTO build(Session session) {
+
+        List<SelectionPokerDTO> selections =
+                session.getSelections()
+                        .stream()
+                        .map(this::buildSelection)
+                        .toList();
 
         return PokerSessionDTO.builder()
 
                 .sessionId(session.getId())
+
                 .commenceA(session.getCommenceA())
+
                 .termineA(session.getTermineA())
+
                 .statut(session.getStatus())
 
+                .options(
+                        sessionOptionBuilder.build(session.getConfigurations())
+                )
+
                 .sprintId(session.getSprint().getId())
+
                 .sprintTitre(session.getSprint().getTitre())
+
+                .selections(selections)
 
                 .build();
     }
@@ -59,9 +80,7 @@ public class PokerBuilderImpl implements PokerBuilder {
                         sprintUserStory.getEstimationFinale()
                 )
 
-                .retenue(
-                        sprintUserStory.getRetenue()
-                )
+
 
                 .statut(
                         sprintUserStory.getStatut()

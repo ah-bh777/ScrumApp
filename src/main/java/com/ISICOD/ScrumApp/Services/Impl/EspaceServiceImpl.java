@@ -2,6 +2,7 @@ package com.ISICOD.ScrumApp.Services.Impl;
 
 import com.ISICOD.ScrumApp.DTOs.Espace.*;
 import com.ISICOD.ScrumApp.Entities.Espace;
+import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import com.ISICOD.ScrumApp.Repositories.EspaceRepository;
 import com.ISICOD.ScrumApp.Services.EspaceService;
 import lombok.RequiredArgsConstructor;
@@ -112,6 +113,8 @@ public class EspaceServiceImpl implements EspaceService {
         // Sprints
         // ===========================
 
+
+
         List<SprintDashboardDTO> sprints =
 
                 espace.getSprints()
@@ -149,6 +152,7 @@ public class EspaceServiceImpl implements EspaceService {
 
                                                     .build())
                                             .toList();
+
 
                             // --------------------------
                             // Sessions
@@ -218,6 +222,20 @@ public class EspaceServiceImpl implements EspaceService {
 
                                             .toList();
 
+
+                            int totalStories = sprint.getSprintUserStories().size();
+
+                            int completedStories = (int) sprint.getSprintUserStories()
+                                    .stream()
+                                    .filter(sus ->
+                                            sus.getStatut() == StatutSprintBacklogItem.TERMINEE)
+                                    .count();
+
+                            int progress = totalStories == 0
+                                    ? 0
+                                    : (completedStories * 100) / totalStories;
+
+
                             return SprintDashboardDTO.builder()
 
                                     .sprintId(
@@ -240,13 +258,29 @@ public class EspaceServiceImpl implements EspaceService {
                                             sprint.getTermineA()
                                     )
 
-                                    .userStories(
-                                            sprintStories
+                                    .statut(
+                                            sprint.getStatut()
                                     )
 
-                                    .sessions(
-                                            sessions
+                                    .completedStories(
+                                            completedStories
                                     )
+
+                                    .totalStories(
+                                            totalStories
+                                    )
+
+                                    .progress(
+                                            progress
+                                    )
+
+//                                    .userStories(
+//                                            sprintStories
+//                                    )
+//
+//                                    .sessions(
+//                                            sessions
+//                                    )
 
                                     .build();
 

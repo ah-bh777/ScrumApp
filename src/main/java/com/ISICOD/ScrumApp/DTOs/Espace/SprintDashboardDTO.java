@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Espace;
 
+import com.ISICOD.ScrumApp.Enums.StatutSprint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +26,15 @@ public class SprintDashboardDTO {
 
     private LocalDateTime termineA;
 
-    private List<SprintUserStoryDTO> userStories;
+    private StatutSprint statut;
 
-    private List<SessionResumeDTO> sessions;
+    private Integer completedStories;
+
+    private Integer totalStories;
+
+    private Integer progress;
+
+//    private List<SprintUserStoryDTO> userStories;
+//
+//    private List<SessionResumeDTO> sessions;
 }

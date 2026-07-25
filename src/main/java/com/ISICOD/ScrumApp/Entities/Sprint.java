@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Entities;
 
+import com.ISICOD.ScrumApp.Enums.StatutSprint;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,10 @@ public class Sprint {
 
     @Column(name = "cree_a")
     private LocalDateTime creeA;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatutSprint statut;
 
     @ManyToOne
     @JoinColumn(name = "espace_id" , nullable = false)

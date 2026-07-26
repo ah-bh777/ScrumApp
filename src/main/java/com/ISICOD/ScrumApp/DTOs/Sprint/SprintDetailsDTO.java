@@ -13,6 +13,10 @@ public class SprintDetailsDTO {
 
     private Integer sprintId;
 
+    private Integer espaceId;
+
+    private String workspaceName;
+
     private String titre;
 
     private String objectif;

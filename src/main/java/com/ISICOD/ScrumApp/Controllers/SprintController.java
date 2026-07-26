@@ -91,7 +91,6 @@ public class SprintController {
     }
 
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSprint(
             @PathVariable Integer id) {

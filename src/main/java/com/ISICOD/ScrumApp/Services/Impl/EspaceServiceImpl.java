@@ -82,14 +82,21 @@ public class EspaceServiceImpl implements EspaceService {
         // ===========================
 
         List<EspaceMemberDTO> membres =
+
                 espace.getAppartenances()
                         .stream()
                         .map(app -> EspaceMemberDTO.builder()
+
                                 .utilisateurId(app.getUtilisateur().getId())
+
                                 .nom(app.getUtilisateur().getNom())
+
                                 .prenom(app.getUtilisateur().getPrenom())
+
                                 .role(app.getRoleAttribue())
+
                                 .build())
+
                         .toList();
 
         // ===========================
@@ -101,140 +108,233 @@ public class EspaceServiceImpl implements EspaceService {
                 espace.getProductBacklog()
                         .getUserStories()
                         .stream()
+
                         .map(story -> UserStoryResumeDTO.builder()
+
                                 .id(story.getId())
+
                                 .titre(story.getTitre())
+
                                 .priorite(story.getPriorite())
+
                                 .storyPoints(story.getStoryPoints())
+
                                 .build())
+
                         .toList();
 
         // ===========================
         // Sprints
         // ===========================
 
-
-
         List<SprintDashboardDTO> sprints =
 
                 espace.getSprints()
+
                         .stream()
+
                         .map(sprint -> {
 
-                            // --------------------------
-                            // Sprint User Stories
-                            // --------------------------
+                            // ==================================================
+                            // OLD IMPLEMENTATION (kept for future reference)
+                            // ==================================================
 
-                            List<SprintUserStoryDTO> sprintStories =
+                        /*
+                        List<SprintUserStoryDTO> sprintStories =
 
-                                    sprint.getSprintUserStories()
-                                            .stream()
-                                            .map(sus -> SprintUserStoryDTO.builder()
+                                sprint.getSprintUserStories()
+                                        .stream()
+                                        .map(sus -> SprintUserStoryDTO.builder()
 
-                                                    .sprintUserStoryId(sus.getId())
+                                                .sprintUserStoryId(
+                                                        sus.getId()
+                                                )
 
+                                                .estimationFinale(
+                                                        sus.getEstimationFinale()
+                                                )
 
-                                                    .estimationFinale(
-                                                            sus.getEstimationFinale()
+                                                .statut(
+                                                        sus.getStatut()
+                                                )
+
+                                                .titre(
+                                                        sus.getUserStory().getTitre()
+                                                )
+
+                                                .storyPoints(
+                                                        sus.getUserStory().getStoryPoints()
+                                                )
+
+                                                .build())
+
+                                        .toList();
+                        */
+
+                        /*
+                        List<SessionResumeDTO> sessions =
+
+                                sprint.getSessions()
+                                        .stream()
+                                        .map(session -> {
+
+                                            List<ParticipantResumeDTO> participants =
+
+                                                    session.getParticipants()
+                                                            .stream()
+                                                            .map(participant ->
+
+                                                                    ParticipantResumeDTO.builder()
+
+                                                                            .participantId(
+                                                                                    participant.getId()
+                                                                            )
+
+                                                                            .pseudo(
+                                                                                    participant.getPseudo()
+                                                                            )
+
+                                                                            .prenom(
+                                                                                    participant.getUtilisateur()
+                                                                                            .getPrenom()
+                                                                            )
+
+                                                                            .nom(
+                                                                                    participant.getUtilisateur()
+                                                                                            .getNom()
+                                                                            )
+
+                                                                            .role(
+                                                                                    participant.getRoleSession()
+                                                                            )
+
+                                                                            .build()
+
+                                                            )
+
+                                                            .toList();
+
+                                            return SessionResumeDTO.builder()
+
+                                                    .sessionId(
+                                                            session.getId()
+                                                    )
+
+                                                    .type(
+                                                            session.getTypeSession()
+                                                                    .getCode()
                                                     )
 
                                                     .statut(
-                                                            sus.getStatut()
+                                                            session.getStatus()
                                                     )
 
-                                                    .titre(
-                                                            sus.getUserStory().getTitre()
+                                                    .participants(
+                                                            participants
                                                     )
 
-                                                    .storyPoints(
-                                                            sus.getUserStory().getStoryPoints()
-                                                    )
+                                                    .build();
 
-                                                    .build())
-                                            .toList();
+                                        })
 
+                                        .toList();
+                        */
 
-                            // --------------------------
-                            // Sessions
-                            // --------------------------
+                            // ==================================================
+                            // Preview Stories
+                            // ==================================================
 
-                            List<SessionResumeDTO> sessions =
+                            List<StoryPreviewDTO> previewStories =
 
-                                    sprint.getSessions()
+                                    sprint.getSprintUserStories()
+
                                             .stream()
-                                            .map(session -> {
 
-                                                List<ParticipantResumeDTO> participants =
+                                            .limit(3)
 
-                                                        session.getParticipants()
-                                                                .stream()
-                                                                .map(participant ->
-                                                                        ParticipantResumeDTO.builder()
+                                            .map(sus ->
 
-                                                                                .participantId(
-                                                                                        participant.getId()
-                                                                                )
+                                                    StoryPreviewDTO.builder()
 
-                                                                                .pseudo(
-                                                                                        participant.getPseudo()
-                                                                                )
+                                                            .sprintUserStoryId(
+                                                                    sus.getId()
+                                                            )
 
-                                                                                .prenom(
-                                                                                        participant.getUtilisateur()
-                                                                                                .getPrenom()
-                                                                                )
+                                                            .titre(
+                                                                    sus.getUserStory()
+                                                                            .getTitre()
+                                                            )
 
-                                                                                .nom(
-                                                                                        participant.getUtilisateur()
-                                                                                                .getNom()
-                                                                                )
+                                                            .storyPoints(
+                                                                    sus.getUserStory()
+                                                                            .getStoryPoints()
+                                                            )
 
-                                                                                .role(
-                                                                                        participant.getRoleSession()
-                                                                                )
+                                                            .statut(
+                                                                    sus.getStatut()
+                                                            )
 
-                                                                                .build())
+                                                            .build()
 
-                                                                .toList();
-
-                                                return SessionResumeDTO.builder()
-
-                                                        .sessionId(
-                                                                session.getId()
-                                                        )
-
-                                                        .type(
-                                                                session.getTypeSession()
-                                                                        .getCode()
-                                                        )
-
-                                                        .statut(
-                                                                session.getStatus()
-                                                        )
-
-                                                        .participants(
-                                                                participants
-                                                        )
-
-                                                        .build();
-
-                                            })
+                                            )
 
                                             .toList();
 
+                            // ==================================================
+                            // Statistics
+                            // ==================================================
 
-                            int totalStories = sprint.getSprintUserStories().size();
+                            int totalStories =
+                                    sprint.getSprintUserStories().size();
 
-                            int completedStories = (int) sprint.getSprintUserStories()
-                                    .stream()
-                                    .filter(sus ->
-                                            sus.getStatut() == StatutSprintBacklogItem.TERMINEE)
-                                    .count();
+                            int completedStories =
 
-                            int progress = totalStories == 0
-                                    ? 0
-                                    : (completedStories * 100) / totalStories;
+                                    (int) sprint.getSprintUserStories()
 
+                                            .stream()
+
+                                            .filter(story ->
+                                                    story.getStatut()
+                                                            == StatutSprintBacklogItem.TERMINEE)
+
+                                            .count();
+
+                            int totalStoryPoints =
+
+                                    sprint.getSprintUserStories()
+
+                                            .stream()
+
+                                            .mapToInt(story ->
+                                                    story.getUserStory()
+                                                            .getStoryPoints())
+
+                                            .sum();
+
+                            int completedStoryPoints =
+
+                                    sprint.getSprintUserStories()
+
+                                            .stream()
+
+                                            .filter(story ->
+                                                    story.getStatut()
+                                                            == StatutSprintBacklogItem.TERMINEE)
+
+                                            .mapToInt(story ->
+                                                    story.getUserStory()
+                                                            .getStoryPoints())
+
+                                            .sum();
+
+                            int progress =
+                                    totalStories == 0
+                                            ? 0
+                                            : (completedStories * 100) / totalStories;
+
+                            // ==================================================
+                            // Sprint Card
+                            // ==================================================
 
                             return SprintDashboardDTO.builder()
 
@@ -270,17 +370,25 @@ public class EspaceServiceImpl implements EspaceService {
                                             totalStories
                                     )
 
+                                    .completedStoryPoints(
+                                            completedStoryPoints
+                                    )
+
+                                    .totalStoryPoints(
+                                            totalStoryPoints
+                                    )
+
                                     .progress(
                                             progress
                                     )
 
-//                                    .userStories(
-//                                            sprintStories
-//                                    )
-//
-//                                    .sessions(
-//                                            sessions
-//                                    )
+                                    .capacite(
+                                            sprint.getCapaciteMax()
+                                    )
+
+                                    .previewStories(
+                                            previewStories
+                                    )
 
                                     .build();
 

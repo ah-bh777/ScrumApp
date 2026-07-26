@@ -54,6 +54,14 @@ public class SprintBuilderImpl implements SprintBuilder {
 
                 .titre(sprint.getTitre())
 
+                .espaceId(
+                        sprint.getEspace().getId()
+                )
+
+                .workspaceName(
+                        sprint.getEspace().getNom()
+                )
+
                 .objectif(sprint.getObjectif())
 
                 .commenceDe(sprint.getCommFinanceDeDate())

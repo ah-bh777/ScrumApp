@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,9 +31,18 @@ public class SprintDashboardDTO {
 
     private Integer totalStories;
 
+    private Integer completedStoryPoints;
+
+    private Integer totalStoryPoints;
+
     private Integer progress;
 
-//    private List<SprintUserStoryDTO> userStories;
+    private Integer capacite;
+
+    private List<StoryPreviewDTO> previewStories;
+
+
+    //    private List<SprintUserStoryDTO> userStories;
 //
 //    private List<SessionResumeDTO> sessions;
 }

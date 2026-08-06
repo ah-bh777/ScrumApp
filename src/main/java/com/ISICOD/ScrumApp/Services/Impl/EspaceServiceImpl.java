@@ -2,6 +2,7 @@ package com.ISICOD.ScrumApp.Services.Impl;
 
 import com.ISICOD.ScrumApp.DTOs.Espace.*;
 import com.ISICOD.ScrumApp.Entities.Espace;
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import com.ISICOD.ScrumApp.Repositories.EspaceRepository;
 import com.ISICOD.ScrumApp.Services.EspaceService;
@@ -270,8 +271,12 @@ public class EspaceServiceImpl implements EspaceService {
                                                                             .getStoryPoints()
                                                             )
 
-                                                            .statut(
+                                                            .planningStatus(
                                                                     sus.getStatut()
+                                                            )
+
+                                                            .executionStatus(
+                                                                    sus.getEtatExecution()
                                                             )
 
                                                             .build()
@@ -294,8 +299,8 @@ public class EspaceServiceImpl implements EspaceService {
                                             .stream()
 
                                             .filter(story ->
-                                                    story.getStatut()
-                                                            == StatutSprintBacklogItem.TERMINEE)
+                                                    story.getEtatExecution()
+                                                            == EtatExecutionSprint.TERMINEE)
 
                                             .count();
 
@@ -318,8 +323,8 @@ public class EspaceServiceImpl implements EspaceService {
                                             .stream()
 
                                             .filter(story ->
-                                                    story.getStatut()
-                                                            == StatutSprintBacklogItem.TERMINEE)
+                                                    story.getEtatExecution()
+                                                            == EtatExecutionSprint.TERMINEE)
 
                                             .mapToInt(story ->
                                                     story.getUserStory()

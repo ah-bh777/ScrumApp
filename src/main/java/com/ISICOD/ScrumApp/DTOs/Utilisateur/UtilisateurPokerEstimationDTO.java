@@ -1,9 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Utilisateur;
 
-import com.ISICOD.ScrumApp.Enums.RoleSession;
-import com.ISICOD.ScrumApp.Enums.StatutSession;
-import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
-import com.ISICOD.ScrumApp.Enums.StatutVote;
+import com.ISICOD.ScrumApp.Enums.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,7 +40,7 @@ public class UtilisateurPokerEstimationDTO {
     private Integer userStoryId;
     private String titre;
     private String description;
-    private String priorite;
+    private PrioriteUserStory priorite;
     private Integer storyPoints;
 
     private Integer tourId;

@@ -1,39 +1,49 @@
-package com.ISICOD.ScrumApp.DTOs.Sprint;
+    package com.ISICOD.ScrumApp.DTOs.Sprint;
 
-import lombok.*;
+    import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
+    import java.time.LocalDateTime;
+    import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class SprintDetailsDTO {
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class SprintDetailsDTO {
 
-    private Integer sprintId;
+        private Integer sprintId;
 
-    private Integer espaceId;
+        private Integer espaceId;
 
-    private String workspaceName;
+        private String workspaceName;
 
-    private String titre;
+        private String titre;
 
-    private String objectif;
+        private String objectif;
 
-    private LocalDateTime commenceDe;
+        private LocalDateTime commenceDe;
 
-    private LocalDateTime termineA;
+        private LocalDateTime termineA;
 
-    private Integer capaciteMax;
+        private Integer capaciteMax;
 
-    private LocalDateTime creeA;
+        private LocalDateTime creeA;
 
-    private SessionSummaryDTO poker;
+        private SessionSummaryDTO poker;
 
-    private SessionSummaryDTO retro;
+        private SessionSummaryDTO retro;
 
-    private List<SessionSummaryDTO> dailies;
+        private List<SessionSummaryDTO> dailies;
 
-    private List<SprintStoryDTO> userStories;
-}
+        private List<SprintStoryDTO> userStories;
+
+        private Integer completedStories;
+
+        private Integer totalStories;
+
+        private Integer completedStoryPoints;
+
+        private Integer totalStoryPoints;
+
+        private Integer progress;
+    }

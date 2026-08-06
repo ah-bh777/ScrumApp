@@ -1,7 +1,10 @@
 package com.ISICOD.ScrumApp.Services.Builders.Impl;
 
 import com.ISICOD.ScrumApp.DTOs.Sprint.*;
-import com.ISICOD.ScrumApp.Entities.*;
+import com.ISICOD.ScrumApp.Entities.Session;
+import com.ISICOD.ScrumApp.Entities.Sprint;
+import com.ISICOD.ScrumApp.Entities.SprintUserStory;
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
 import com.ISICOD.ScrumApp.Enums.TypeSessionCode;
 import com.ISICOD.ScrumApp.Services.Builders.SprintBuilder;
 import lombok.RequiredArgsConstructor;
@@ -48,11 +51,47 @@ public class SprintBuilderImpl implements SprintBuilder {
                         .map(this::buildSessionSummary)
                         .toList();
 
+        // ==========================================
+        // Sprint Metrics
+        // ==========================================
+
+        int totalStories = sprint.getSprintUserStories().size();
+
+        int completedStories =
+                (int) sprint.getSprintUserStories()
+                        .stream()
+                        .filter(story ->
+                                story.getEtatExecution() == EtatExecutionSprint.TERMINEE)
+                        .count();
+
+        int totalStoryPoints =
+                sprint.getSprintUserStories()
+                        .stream()
+                        .mapToInt(story ->
+                                story.getUserStory().getStoryPoints() == null
+                                        ? 0
+                                        : story.getUserStory().getStoryPoints())
+                        .sum();
+
+        int completedStoryPoints =
+                sprint.getSprintUserStories()
+                        .stream()
+                        .filter(story ->
+                                story.getEtatExecution() == EtatExecutionSprint.TERMINEE)
+                        .mapToInt(story ->
+                                story.getUserStory().getStoryPoints() == null
+                                        ? 0
+                                        : story.getUserStory().getStoryPoints())
+                        .sum();
+
+        int progress =
+                totalStories == 0
+                        ? 0
+                        : (completedStories * 100) / totalStories;
+
         return SprintDetailsDTO.builder()
 
                 .sprintId(sprint.getId())
-
-                .titre(sprint.getTitre())
 
                 .espaceId(
                         sprint.getEspace().getId()
@@ -62,23 +101,65 @@ public class SprintBuilderImpl implements SprintBuilder {
                         sprint.getEspace().getNom()
                 )
 
-                .objectif(sprint.getObjectif())
+                .titre(
+                        sprint.getTitre()
+                )
 
-                .commenceDe(sprint.getCommFinanceDeDate())
+                .objectif(
+                        sprint.getObjectif()
+                )
 
-                .termineA(sprint.getTermineA())
+                .commenceDe(
+                        sprint.getCommFinanceDeDate()
+                )
 
-                .capaciteMax(sprint.getCapaciteMax())
+                .termineA(
+                        sprint.getTermineA()
+                )
 
-                .creeA(sprint.getCreeA())
+                .capaciteMax(
+                        sprint.getCapaciteMax()
+                )
 
-                .poker(poker)
+                .creeA(
+                        sprint.getCreeA()
+                )
 
-                .retro(retro)
+                .poker(
+                        poker
+                )
 
-                .dailies(dailies)
+                .retro(
+                        retro
+                )
 
-                .userStories(stories)
+                .dailies(
+                        dailies
+                )
+
+                .completedStories(
+                        completedStories
+                )
+
+                .totalStories(
+                        totalStories
+                )
+
+                .completedStoryPoints(
+                        completedStoryPoints
+                )
+
+                .totalStoryPoints(
+                        totalStoryPoints
+                )
+
+                .progress(
+                        progress
+                )
+
+                .userStories(
+                        stories
+                )
 
                 .build();
     }
@@ -89,22 +170,6 @@ public class SprintBuilderImpl implements SprintBuilder {
 
                 .sprintUserStoryId(
                         sprintUserStory.getId()
-                )
-
-                .estimationFinale(
-                        sprintUserStory.getEstimationFinale()
-                )
-
-                .commitA(
-                        sprintUserStory.getCommitA()
-                )
-
-                .statut(
-                        sprintUserStory.getStatut()
-                )
-
-                .termineA(
-                        sprintUserStory.getTermineA()
                 )
 
                 .userStoryId(
@@ -127,8 +192,42 @@ public class SprintBuilderImpl implements SprintBuilder {
                         sprintUserStory.getUserStory().getStoryPoints()
                 )
 
-                .creeA(
-                        sprintUserStory.getUserStory().getCreeA()
+                .estimationFinale(
+                        sprintUserStory.getEstimationFinale()
+                )
+
+                .planningStatus(
+                        sprintUserStory.getStatut()
+                )
+
+                .executionStatus(
+                        sprintUserStory.getEtatExecution()
+                )
+
+                .commitA(
+                        sprintUserStory.getCommitA()
+                )
+
+                .termineA(
+                        sprintUserStory.getTermineA()
+                )
+
+                .assigneeId(
+                        sprintUserStory.getAssigneA() != null
+                                ? sprintUserStory.getAssigneA().getId()
+                                : null
+                )
+
+                .assigneeNom(
+                        sprintUserStory.getAssigneA() != null
+                                ? sprintUserStory.getAssigneA().getNom()
+                                : null
+                )
+
+                .assigneePrenom(
+                        sprintUserStory.getAssigneA() != null
+                                ? sprintUserStory.getAssigneA().getPrenom()
+                                : null
                 )
 
                 .build();
@@ -138,15 +237,22 @@ public class SprintBuilderImpl implements SprintBuilder {
 
         return SessionSummaryDTO.builder()
 
-                .sessionId(session.getId())
+                .sessionId(
+                        session.getId()
+                )
 
-                .statut(session.getStatus())
+                .statut(
+                        session.getStatus()
+                )
 
-                .commenceA(session.getCommenceA())
+                .commenceA(
+                        session.getCommenceA()
+                )
 
-                .termineA(session.getTermineA())
+                .termineA(
+                        session.getTermineA()
+                )
 
                 .build();
     }
-
 }

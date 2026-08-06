@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Entities;
 
+import com.ISICOD.ScrumApp.Enums.PrioriteUserStory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,8 +25,9 @@ public class UserStory {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String priorite;
+    private PrioriteUserStory priorite;
 
     @Column(name = "story_points")
     private Integer storyPoints;

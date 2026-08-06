@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Entities;
 
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,9 +35,18 @@ public class SprintUserStory {
     @Column(nullable = false)
     private StatutSprintBacklogItem statut;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "etat_execution", nullable = false)
+    @Builder.Default
+    private EtatExecutionSprint etatExecution = EtatExecutionSprint.A_FAIRE;
+
     @Column(name = "termine_a")
     private LocalDateTime termineA;
 
+
+    @ManyToOne
+    @JoinColumn(name = "assigne_a")
+    private Utilisateur assigneA;
 
     @ManyToOne
     @JoinColumn(name = "sprint_id", nullable = false)

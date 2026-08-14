@@ -1,34 +1,34 @@
-package com.ISICOD.ScrumApp.DTOs.Poker;
+    package com.ISICOD.ScrumApp.DTOs.Poker;
 
-import com.ISICOD.ScrumApp.DTOs.Common.SessionOptionDTO;
-import com.ISICOD.ScrumApp.Enums.StatutSession;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+    import com.ISICOD.ScrumApp.DTOs.Common.SessionOptionDTO;
+    import com.ISICOD.ScrumApp.Enums.StatutSession;
+    import lombok.AllArgsConstructor;
+    import lombok.Builder;
+    import lombok.Data;
+    import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
+    import java.time.LocalDateTime;
+    import java.util.List;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class PokerSessionDTO {
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class PokerSessionDTO {
 
-    private Integer sessionId;
+        private Integer sessionId;
 
-    private LocalDateTime commenceA;
+        private LocalDateTime commenceA;
 
-    private LocalDateTime termineA;
+        private LocalDateTime termineA;
 
-    private StatutSession statut;
+        private StatutSession statut;
 
-    private Integer sprintId;
+        private Integer sprintId;
 
-    private String sprintTitre;
+        private String sprintTitre;
 
-    private List<SessionOptionDTO> options;
+        private List<SessionOptionDTO> options;
 
-    private List<SelectionPokerDTO> selections;
-}
+        private List<SelectionPokerDTO> selections;
+    }

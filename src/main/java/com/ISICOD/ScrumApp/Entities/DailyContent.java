@@ -22,7 +22,7 @@ public class DailyContent {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String contenu;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // need to change this  EtatExecutionSprint
     @Column(name = "type_contenu", nullable = false)
     private TypeDailyContent typeContenu;
 

@@ -141,6 +141,9 @@ public class DailyBuilderImpl implements DailyBuilder {
                         sprintUserStory.getStatut()
                 )
 
+                .etatExecution(
+                        sprintUserStory.getEtatExecution()
+                )
 
                 .estimationFinale(
                         sprintUserStory.getEstimationFinale()

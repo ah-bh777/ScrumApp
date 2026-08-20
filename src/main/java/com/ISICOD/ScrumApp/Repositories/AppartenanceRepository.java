@@ -17,4 +17,6 @@ public interface AppartenanceRepository extends JpaRepository<Appartenance, Inte
             Integer espaceId
     );
 
+    List<Appartenance> findByEspaceId(Integer espaceId);
+
 }

@@ -1,23 +1,23 @@
 package com.ISICOD.ScrumApp.DTOs.Espace;
 
-import com.ISICOD.ScrumApp.Enums.PrioriteUserStory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStoryResumeDTO {
+public class UserStorySprintHistoryDTO {
 
-    private Integer id;
+    private Integer sprintId;
 
-    private String titre;
+    private String sprintTitre;
 
-    private PrioriteUserStory priorite;
+    private Integer estimationFinale;
 
-    private Integer storyPoints;
+    private List<DailyHistoryDTO> dailyHistory;
 }

@@ -1,5 +1,7 @@
 package com.ISICOD.ScrumApp.DTOs.Sprint;
 
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
+import com.ISICOD.ScrumApp.Enums.PrioriteUserStory;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,17 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class SprintStoryDTO {
 
-
     private Integer sprintUserStoryId;
-
-    private Integer estimationFinale;
-
-    private LocalDateTime commitA;
-
-    private StatutSprintBacklogItem statut;
-
-    private LocalDateTime termineA;
-
 
     private Integer userStoryId;
 
@@ -32,9 +24,25 @@ public class SprintStoryDTO {
 
     private String description;
 
-    private String priorite;
+    private PrioriteUserStory priorite;
 
     private Integer storyPoints;
 
-    private LocalDateTime creeA;
+    private Integer estimationFinale;
+
+    private StatutSprintBacklogItem planningStatus;
+
+    private EtatExecutionSprint executionStatus;
+
+    private LocalDateTime commitA;
+
+    private LocalDateTime termineA;
+
+    private Integer assigneeId;
+
+    private String assigneeNom;
+
+    private String assigneePrenom;
+
+
 }

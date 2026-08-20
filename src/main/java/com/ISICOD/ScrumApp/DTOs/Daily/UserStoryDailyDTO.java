@@ -1,5 +1,7 @@
 package com.ISICOD.ScrumApp.DTOs.Daily;
 
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
+import com.ISICOD.ScrumApp.Enums.PrioriteUserStory;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,13 +21,15 @@ public class UserStoryDailyDTO {
 
     private String description;
 
-    private String priorite;
+    private PrioriteUserStory priorite;
 
     private Integer storyPoints;
 
     private StatutSprintBacklogItem statut;
 
     private Boolean retenue;
+
+    private EtatExecutionSprint etatExecution;
 
     private Integer estimationFinale;
 

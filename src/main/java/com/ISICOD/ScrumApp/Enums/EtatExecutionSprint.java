@@ -1,6 +1,6 @@
 package com.ISICOD.ScrumApp.Enums;
 
-public enum TypeDailyContent {
+public enum EtatExecutionSprint {
     A_FAIRE,
     EN_COURS,
     TERMINEE,

@@ -6,18 +6,23 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserStoryResumeDTO {
+public class UserStoryBacklogDTO {
 
-    private Integer id;
+    private Integer userStoryId;
 
     private String titre;
+
+    private String description;
 
     private PrioriteUserStory priorite;
 
     private Integer storyPoints;
+
+    private List<UserStorySprintHistoryDTO> sprints;
 }

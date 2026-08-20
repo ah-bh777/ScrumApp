@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.ActionItemsAndDailyContent.SprintActionItemsAndBlockagesDTO;
 import com.ISICOD.ScrumApp.DTOs.Sprint.SprintDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Sprint;
 import com.ISICOD.ScrumApp.Services.SprintService;
@@ -124,6 +125,16 @@ public class SprintController {
 
         return ResponseEntity.ok(
                 sprintService.getSprintDetails(id)
+        );
+    }
+
+    @GetMapping("/{sprintId}/action-items")
+    public ResponseEntity<SprintActionItemsAndBlockagesDTO> getSprintActionItemsAndBlockages(
+            @PathVariable Integer sprintId
+    ) {
+
+        return ResponseEntity.ok(
+                sprintService.getSprintActionItemsAndBlockages(sprintId)
         );
     }
 }

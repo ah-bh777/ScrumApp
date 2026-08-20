@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.ActionItemsAndDailyContent.SprintActionItemsAndBlockagesDTO;
 import com.ISICOD.ScrumApp.DTOs.Sprint.SprintDetailsDTO;
 import com.ISICOD.ScrumApp.Entities.Sprint;
 
@@ -19,4 +20,8 @@ public interface SprintService {
     void deleteSprint(Integer id);
 
     SprintDetailsDTO getSprintDetails(Integer sprintId);
+
+    SprintActionItemsAndBlockagesDTO getSprintActionItemsAndBlockages(
+            Integer sprintId
+    );
 }

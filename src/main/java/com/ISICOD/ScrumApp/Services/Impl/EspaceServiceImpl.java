@@ -1,9 +1,14 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
 import com.ISICOD.ScrumApp.DTOs.Espace.*;
+import com.ISICOD.ScrumApp.Entities.Appartenance;
 import com.ISICOD.ScrumApp.Entities.Espace;
+import com.ISICOD.ScrumApp.Enums.EtatExecutionSprint;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
+import com.ISICOD.ScrumApp.Repositories.AppartenanceRepository;
 import com.ISICOD.ScrumApp.Repositories.EspaceRepository;
+import com.ISICOD.ScrumApp.Services.Builders.EspaceMemberBuilder;
+import com.ISICOD.ScrumApp.Services.Builders.EspaceMemberListBuilder;
 import com.ISICOD.ScrumApp.Services.EspaceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,9 @@ import java.util.Optional;
 public class EspaceServiceImpl implements EspaceService {
 
     private final EspaceRepository espaceRepository;
+    private final AppartenanceRepository appartenanceRepository;
+    private final EspaceMemberListBuilder espaceMemberListBuilder;
+
 
     @Override
     public Espace createEspace(Espace espace) {
@@ -270,8 +278,12 @@ public class EspaceServiceImpl implements EspaceService {
                                                                             .getStoryPoints()
                                                             )
 
-                                                            .statut(
+                                                            .planningStatus(
                                                                     sus.getStatut()
+                                                            )
+
+                                                            .executionStatus(
+                                                                    sus.getEtatExecution()
                                                             )
 
                                                             .build()
@@ -294,8 +306,8 @@ public class EspaceServiceImpl implements EspaceService {
                                             .stream()
 
                                             .filter(story ->
-                                                    story.getStatut()
-                                                            == StatutSprintBacklogItem.TERMINEE)
+                                                    story.getEtatExecution()
+                                                            == EtatExecutionSprint.TERMINEE)
 
                                             .count();
 
@@ -318,8 +330,8 @@ public class EspaceServiceImpl implements EspaceService {
                                             .stream()
 
                                             .filter(story ->
-                                                    story.getStatut()
-                                                            == StatutSprintBacklogItem.TERMINEE)
+                                                    story.getEtatExecution()
+                                                            == EtatExecutionSprint.TERMINEE)
 
                                             .mapToInt(story ->
                                                     story.getUserStory()
@@ -435,5 +447,18 @@ public class EspaceServiceImpl implements EspaceService {
                 )
 
                 .build();
+    }
+
+
+    @Override
+    public List<EspaceMemberListDTO> getEspaceMembers(
+            Integer espaceId
+    ) {
+
+        return appartenanceRepository
+                .findByEspaceId(espaceId)
+                .stream()
+                .map(espaceMemberListBuilder::build)
+                .toList();
     }
 }

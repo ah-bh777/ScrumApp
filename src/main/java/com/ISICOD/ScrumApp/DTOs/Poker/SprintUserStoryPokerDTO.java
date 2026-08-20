@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.DTOs.Poker;
 
+import com.ISICOD.ScrumApp.Enums.PrioriteUserStory;
 import com.ISICOD.ScrumApp.Enums.StatutSprintBacklogItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class SprintUserStoryPokerDTO {
 
     private String description;
 
-    private String priorite;
+    private PrioriteUserStory priorite;
 
     private Integer storyPoints;
 

@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Services;
 
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceBacklogDTO;
 import com.ISICOD.ScrumApp.Entities.ProductBacklog;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface ProductBacklogService {
     ProductBacklog updateProductBacklog(Integer id, ProductBacklog productBacklog);
 
     void deleteProductBacklog(Integer id);
+
+    EspaceBacklogDTO getEspaceBacklog(Integer espaceId);
 }

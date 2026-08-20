@@ -1,5 +1,6 @@
 package com.ISICOD.ScrumApp.Controllers;
 
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceBacklogDTO;
 import com.ISICOD.ScrumApp.Entities.ProductBacklog;
 import com.ISICOD.ScrumApp.Services.ProductBacklogService;
 import lombok.RequiredArgsConstructor;
@@ -18,54 +19,129 @@ public class ProductBacklogController {
 
     private final ProductBacklogService productBacklogService;
 
+
+    // ============================================================
+    // CREATE
+    // ============================================================
+
     @PostMapping
     public ResponseEntity<ProductBacklog> createProductBacklog(
-            @RequestBody ProductBacklog productBacklog) {
+            @RequestBody ProductBacklog productBacklog
+    ) {
 
         return ResponseEntity.ok(
-                productBacklogService.createProductBacklog(productBacklog)
+                productBacklogService.createProductBacklog(
+                        productBacklog
+                )
         );
     }
+
+
+    // ============================================================
+    // GET BY ID
+    // ============================================================
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductBacklogById(
-            @PathVariable Integer id) {
+            @PathVariable Integer id
+    ) {
 
-        return productBacklogService.getProductBacklogById(id)
-                .<ResponseEntity<?>>map(ResponseEntity::ok)
-                .orElseGet( () ->{
-                    Map<String ,Object> error = new HashMap<>();
-                    error.put("message" , "not found");
-                    error.put("id" , id);
+        return productBacklogService
+                .getProductBacklogById(id)
 
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+                .<ResponseEntity<?>>map(
+                        ResponseEntity::ok
+                )
+
+                .orElseGet(() -> {
+
+                    Map<String, Object> error =
+                            new HashMap<>();
+
+                    error.put(
+                            "message",
+                            "not found"
+                    );
+
+                    error.put(
+                            "id",
+                            id
+                    );
+
+                    return ResponseEntity
+                            .status(HttpStatus.NOT_FOUND)
+                            .body(error);
                 });
     }
 
+
+    // ============================================================
+    // GET ALL
+    // ============================================================
+
     @GetMapping
-    public ResponseEntity<List<ProductBacklog>> getAllProductBacklogs() {
+    public ResponseEntity<List<ProductBacklog>>
+    getAllProductBacklogs() {
 
         return ResponseEntity.ok(
-                productBacklogService.getAllProductBacklogs()
+                productBacklogService
+                        .getAllProductBacklogs()
         );
     }
+
+
+    // ============================================================
+    // GET ESPACE BACKLOG + HISTORY
+    // ============================================================
+
+    @GetMapping("/espace/{espaceId}")
+    public ResponseEntity<EspaceBacklogDTO>
+    getEspaceBacklog(
+            @PathVariable Integer espaceId
+    ) {
+
+        return ResponseEntity.ok(
+                productBacklogService
+                        .getEspaceBacklog(espaceId)
+        );
+    }
+
+
+    // ============================================================
+    // UPDATE
+    // ============================================================
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ProductBacklog> updateProductBacklog(
+    public ResponseEntity<ProductBacklog>
+    updateProductBacklog(
             @PathVariable Integer id,
-            @RequestBody ProductBacklog productBacklog) {
+            @RequestBody ProductBacklog productBacklog
+    ) {
 
         return ResponseEntity.ok(
-                productBacklogService.updateProductBacklog(id, productBacklog)
+                productBacklogService
+                        .updateProductBacklog(
+                                id,
+                                productBacklog
+                        )
         );
     }
 
+
+    // ============================================================
+    // DELETE
+    // ============================================================
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProductBacklog(
-            @PathVariable Integer id) {
+    public ResponseEntity<Void>
+    deleteProductBacklog(
+            @PathVariable Integer id
+    ) {
 
         productBacklogService.deleteProductBacklog(id);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

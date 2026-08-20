@@ -1,6 +1,10 @@
 package com.ISICOD.ScrumApp.Controllers;
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberDTO;
+
+import java.util.List;
 
 import com.ISICOD.ScrumApp.DTOs.Espace.EspaceDashboardDTO;
+import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberListDTO;
 import com.ISICOD.ScrumApp.Entities.Espace;
 import com.ISICOD.ScrumApp.Services.EspaceService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import java.util.List;
 public class EspaceController {
 
     private final EspaceService espaceService;
+
 
     @PostMapping
     public ResponseEntity<Espace> createEspace(
@@ -67,6 +72,18 @@ public class EspaceController {
 
         return ResponseEntity.ok(
                 espaceService.getDashboard(id)
+        );
+    }
+
+    @GetMapping("/{espaceId}/members")
+    public ResponseEntity<List<EspaceMemberListDTO>> getEspaceMembers(
+            @PathVariable Integer espaceId
+    ) {
+
+        return ResponseEntity.ok(
+                espaceService.getEspaceMembers(
+                        espaceId
+                )
         );
     }
 }

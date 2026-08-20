@@ -8,9 +8,21 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DailyContentRepository extends JpaRepository<DailyContent, Integer> {
+public interface DailyContentRepository
+        extends JpaRepository<DailyContent, Integer> {
 
-    List<DailyContent> findByParticipantSessionUtilisateurId(Integer utilisateurId);
+    List<DailyContent> findByParticipantSessionUtilisateurId(
+            Integer utilisateurId
+    );
+
+    List<DailyContent> findBySprintUserStoryId(
+            Integer sprintUserStoryId
+    );
+
+    List<DailyContent> findBySprintUserStoryIdAndTypeContenu(
+            Integer sprintUserStoryId,
+            TypeDailyContent typeContenu
+    );
 
     List<DailyContent> findBySprintUserStorySprintIdAndTypeContenu(
             Integer sprintId,

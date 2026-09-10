@@ -13,4 +13,6 @@ public interface ActionItemRepository extends JpaRepository<ActionItem, Integer>
 
     List<ActionItem> findBySessionSprintId(Integer sprintId);
 
+    List<ActionItem> findByAssigneAId(Integer utilisateurId);
+
 }

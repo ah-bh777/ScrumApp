@@ -28,4 +28,6 @@ public interface DailyContentRepository
             Integer sprintId,
             TypeDailyContent typeContenu
     );
+
+    List<DailyContent> findBySessionId(Integer sessionId);
 }

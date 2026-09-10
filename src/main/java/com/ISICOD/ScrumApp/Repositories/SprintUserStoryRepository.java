@@ -12,4 +12,5 @@ public interface SprintUserStoryRepository
 
     List<SprintUserStory> findByUserStoryId(Integer userStoryId);
 
+    List<SprintUserStory> findBySprintId(Integer sprintId);
 }

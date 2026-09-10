@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Entities;
 
 import com.ISICOD.ScrumApp.Enums.RoleEspace;
+import com.ISICOD.ScrumApp.Enums.StatutInvitation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,5 +38,9 @@ public class Invitation {
     @ManyToOne
     @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur ;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatutInvitation statut;
 
 }

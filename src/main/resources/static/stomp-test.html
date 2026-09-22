@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>STOMP Test</title>
+</head>
+
+<body>
+
+<h1>STOMP WebSocket Test</h1>
+
+<button onclick="connect()">Connect</button>
+<button onclick="subscribe()">Subscribe</button>
+
+<pre id="output"></pre>
+
+<script>
+
+    let socket;
+
+    function log(message) {
+        document.getElementById("output").textContent += message + "\n";
+    }
+
+    function connect() {
+
+        socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onopen = function () {
+
+            log("WebSocket connected");
+
+            socket.send(
+                "CONNECT\n" +
+                "accept-version:1.2\n" +
+                "host:localhost\n" +
+                "\n" +
+                "\0"
+            );
+        };
+
+        socket.onmessage = function (event) {
+
+            log("RECEIVED:");
+            log(event.data);
+        };
+
+        socket.onerror = function (error) {
+
+            log("ERROR");
+            console.log(error);
+        };
+
+        socket.onclose = function () {
+
+            log("WebSocket closed");
+        };
+    }
+
+    function subscribe() {
+
+        socket.send(
+            "SUBSCRIBE\n" +
+            "id:sub-0\n" +
+            "destination:/topic/daily/5\n" +
+            "\n" +
+            "\0"
+        );
+
+        log("Subscribed to /topic/daily/4");
+    }
+
+</script>
+
+</body>
+</html>

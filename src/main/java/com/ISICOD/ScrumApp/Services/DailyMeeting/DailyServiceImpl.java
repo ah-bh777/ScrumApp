@@ -1,12 +1,6 @@
 package com.ISICOD.ScrumApp.Services.DailyMeeting;
 
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyContentRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyContentUpdateDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailySessionRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyStoryOptionDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.ParticipantJoinRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.SessionStatusUpdateDTO;
+import com.ISICOD.ScrumApp.DTOs.DailyMeeting.*;
 import com.ISICOD.ScrumApp.Entities.Appartenance;
 import com.ISICOD.ScrumApp.Entities.DailyContent;
 import com.ISICOD.ScrumApp.Entities.Espace;
@@ -17,6 +11,7 @@ import com.ISICOD.ScrumApp.Entities.SprintUserStory;
 import com.ISICOD.ScrumApp.Entities.TypeSession;
 import com.ISICOD.ScrumApp.Entities.Utilisateur;
 import com.ISICOD.ScrumApp.Enums.RoleEspace;
+import com.ISICOD.ScrumApp.Enums.DailyEventType;
 import com.ISICOD.ScrumApp.Enums.RoleSession;
 import com.ISICOD.ScrumApp.Enums.StatutSession;
 import com.ISICOD.ScrumApp.Enums.TypeSessionCode;
@@ -37,6 +32,7 @@ import com.ISICOD.ScrumApp.Services.Builders.DailyMeeting.DailyMeetingBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.ISICOD.ScrumApp.Services.DailyMeeting.DailyWebSocketPublisher;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -57,6 +53,9 @@ public class DailyServiceImpl implements DailyService {
     private final UtilisateurRepository utilisateurRepository;
     private final AppartenanceRepository appartenanceRepository;
     private final DailyMeetingBuilder dailyMeetingBuilder;
+    private final DailyWebSocketPublisher dailyWebSocketPublisher;
+
+
 
     @Override
     @Transactional(readOnly = true)
@@ -311,6 +310,20 @@ public class DailyServiceImpl implements DailyService {
 
         participantSessionRepository.save(participant);
 
+        DailyWebSocketEventDTO event =
+                DailyWebSocketEventDTO.builder()
+                        .event(DailyEventType.PARTICIPANT_JOINED)
+                        .sessionId(sessionId)
+                        .participant(
+                                dailyMeetingBuilder.buildParticipant(
+                                        participant,
+                                        List.of()
+                                )
+                        )
+                        .build();
+
+        dailyWebSocketPublisher.publish(sessionId, event);
+
         return getDaily(sessionId);
     }
 
@@ -393,6 +406,17 @@ public class DailyServiceImpl implements DailyService {
                         .build();
 
         dailyContentRepository.save(content);
+
+        DailyWebSocketEventDTO event =
+                DailyWebSocketEventDTO.builder()
+                        .event(DailyEventType.CONTENT_ADDED)
+                        .sessionId(sessionId)
+                        .content(
+                                dailyMeetingBuilder.buildContent(content)
+                        )
+                        .build();
+
+        dailyWebSocketPublisher.publish(sessionId, event);
 
         return getDaily(sessionId);
     }
@@ -509,6 +533,18 @@ public class DailyServiceImpl implements DailyService {
 
         dailyContentRepository.save(content);
 
+        DailyWebSocketEventDTO event =
+                DailyWebSocketEventDTO.builder()
+                        .event(DailyEventType.CONTENT_UPDATED)
+                        .sessionId(sessionId)
+                        .content(
+                                dailyMeetingBuilder.buildContent(content)
+                        )
+                        .build();
+
+
+        dailyWebSocketPublisher.publish(sessionId, event);
+
         return getDaily(sessionId);
     }
 
@@ -574,7 +610,17 @@ public class DailyServiceImpl implements DailyService {
 
         validateCanWrite(participant);
 
-        dailyContentRepository.delete(content);
+        DailyContentDTO deletedContent =
+                dailyMeetingBuilder.buildContent(content);
+
+        DailyWebSocketEventDTO event =
+                DailyWebSocketEventDTO.builder()
+                        .event(DailyEventType.CONTENT_DELETED)
+                        .sessionId(sessionId)
+                        .content(deletedContent)
+                        .build();
+
+        dailyWebSocketPublisher.publish(sessionId, event);
     }
 
     @Override
@@ -634,6 +680,17 @@ public class DailyServiceImpl implements DailyService {
         }
 
         sessionRepository.save(session);
+
+        DailyWebSocketEventDTO event =
+                DailyWebSocketEventDTO.builder()
+                        .event(DailyEventType.SESSION_STATUS_CHANGED)
+                        .sessionId(sessionId)
+                        .session(
+                                dailyMeetingBuilder.buildSession(session)
+                        )
+                        .build();
+
+        dailyWebSocketPublisher.publish(sessionId, event);
 
         return getDaily(sessionId);
     }

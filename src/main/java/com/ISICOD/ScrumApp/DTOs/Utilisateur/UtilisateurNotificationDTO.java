@@ -22,6 +22,7 @@ public class UtilisateurNotificationDTO {
     private String description;
     private LocalDateTime envoyeA;
     private LocalDateTime luA;
+    private Integer invitationId;
 
     private Integer actionItemId;
     private String titre;

@@ -1,19 +1,35 @@
+
 package com.ISICOD.ScrumApp.Services;
 
-import com.ISICOD.ScrumApp.Entities.Invitation;
+import com.ISICOD.ScrumApp.DTOs.Invitation.AcceptInvitationRequest;
+import com.ISICOD.ScrumApp.DTOs.Invitation.CreateInvitationRequest;
+import com.ISICOD.ScrumApp.DTOs.Invitation.CreateInvitationResponse;
+import com.ISICOD.ScrumApp.DTOs.Invitation.PendingInvitationResponse;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface InvitationService {
 
-    Invitation createInvitation(Invitation invitation);
+    // Scrum Master invites a user
+    CreateInvitationResponse inviterUtilisateur(
+            Integer espaceId,
+            CreateInvitationRequest request
+    );
 
-    Optional<Invitation> getInvitationById(Integer id);
+    // User retrieves pending invitations
+    List<PendingInvitationResponse> getPendingInvitations(
+            Integer utilisateurId
+    );
 
-    List<Invitation> getAllInvitations();
+    // User accepts an invitation
+    void accepterInvitation(
+            Integer invitationId,
+            AcceptInvitationRequest request
+    );
 
-    Invitation updateInvitation(Integer id, Invitation invitation);
-
-    void deleteInvitation(Integer id);
+    // User declines an invitation
+    void refuserInvitation(
+            Integer invitationId,
+            AcceptInvitationRequest request
+    );
 }

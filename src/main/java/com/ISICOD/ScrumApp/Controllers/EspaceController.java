@@ -1,10 +1,9 @@
 package com.ISICOD.ScrumApp.Controllers;
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberDTO;
+
+import com.ISICOD.ScrumApp.DTOs.Espace.*;
 
 import java.util.List;
 
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceDashboardDTO;
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberListDTO;
 import com.ISICOD.ScrumApp.Entities.Espace;
 import com.ISICOD.ScrumApp.Services.EspaceService;
 import lombok.RequiredArgsConstructor;
@@ -13,21 +12,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import com.ISICOD.ScrumApp.DTOs.Invitation.CreateInvitationRequest;
+import com.ISICOD.ScrumApp.DTOs.Invitation.CreateInvitationResponse;
+import com.ISICOD.ScrumApp.Services.InvitationService;
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/api/espaces")
 @RequiredArgsConstructor
 public class EspaceController {
 
     private final EspaceService espaceService;
+    private final InvitationService invitationService;
 
 
     @PostMapping
-    public ResponseEntity<Espace> createEspace(
-            @RequestBody Espace espace) {
+    public ResponseEntity<CreateEspaceResponse> createEspace(
+            @RequestBody CreateEspaceRequest request
+    ) {
 
-        return ResponseEntity.ok(
-                espaceService.createEspace(espace)
-        );
+        CreateEspaceResponse response =
+                espaceService.createEspaceWithScrumMaster(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
     }
 
     @GetMapping("/{id}")
@@ -86,4 +96,69 @@ public class EspaceController {
                 )
         );
     }
+
+    @GetMapping("/users/{utilisateurId}")
+    public ResponseEntity<List<UserEspaceDTO>> getUserEspaces(
+            @PathVariable Integer utilisateurId
+    ) {
+
+        return ResponseEntity.ok(
+                espaceService.getEspacesByUtilisateur(utilisateurId)
+        );
+    }
+
+
+
+    @PostMapping("/{espaceId}/invitations")
+    public ResponseEntity<CreateInvitationResponse> inviterUtilisateur(
+            @PathVariable Integer espaceId,
+            @RequestBody CreateInvitationRequest request
+    ) {
+        CreateInvitationResponse response =
+                invitationService.inviterUtilisateur(espaceId, request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(response);
+    }
+
+
+
+    @PatchMapping("/{espaceId}/members/{membreId}/role")
+    public ResponseEntity<Void> changerRoleMembre(
+            @PathVariable Integer espaceId,
+            @PathVariable Integer membreId,
+            @RequestBody ChangeMemberRoleRequest request
+    ) {
+        espaceService.changerRoleMembre(
+                espaceId,
+                membreId,
+                request
+        );
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{espaceId}/members/{membreId}")
+    public ResponseEntity<Void> supprimerMembre(
+            @PathVariable Integer espaceId,
+            @PathVariable Integer membreId,
+            @RequestBody RemoveMemberRequest request
+    ) {
+        espaceService.supprimerMembre(espaceId, membreId, request);
+
+        return ResponseEntity.noContent().build();
+    }
+
+
+    @DeleteMapping("/{espaceId}/members/me")
+    public ResponseEntity<Void> quitterEspace(
+            @PathVariable Integer espaceId,
+            @RequestBody LeaveWorkspaceRequest request
+    ) {
+        espaceService.quitterEspace(espaceId, request);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

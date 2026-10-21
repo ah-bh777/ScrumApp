@@ -6,6 +6,7 @@ import com.ISICOD.ScrumApp.Repositories.*;
 import com.ISICOD.ScrumApp.Services.UtilisateurService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final VoteDotRepository voteDotRepository;
     private final ActionItemRepository actionItemRepository;
     private final VotePokerRepository votePokerRepository;
-
 
     @Override
     public Utilisateur createUtilisateur(Utilisateur utilisateur) {
@@ -47,7 +47,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         Utilisateur existingUtilisateur = utilisateurRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Utilisateur introuvable avec l'id : " + id));
-
 
         if (utilisateur.getNom() != null) {
             existingUtilisateur.setNom(utilisateur.getNom());
@@ -79,23 +78,23 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public List<UtilisateurEspaceDTO> getUtilisateursEspace(Integer id){
+    public List<UtilisateurEspaceDTO> getUtilisateursEspace(Integer id) {
+
         List<Appartenance> appartenances =
                 appartenanceRepository.getAppartenanceByUtilisateurId(id);
 
-        return  appartenances.stream().map(app -> {
-            return  UtilisateurEspaceDTO.builder()
-                    .espaceId(app.getEspace().getId())
-                    .nom(app.getEspace().getNom())
-                    .nomEquipe(app.getEspace().getNomEquipe())
-                    .capacite(app.getEspace().getCapacite())
-                    .estActive(app.getEspace().getEstActive())
-                    .role(app.getRoleAttribue())
-                    .rejointA(app.getRejointA())
-                    .build();
-        } ).toList();
+        return appartenances.stream()
+                .map(app -> UtilisateurEspaceDTO.builder()
+                        .espaceId(app.getEspace().getId())
+                        .nom(app.getEspace().getNom())
+                        .nomEquipe(app.getEspace().getNomEquipe())
+                        .capacite(app.getEspace().getCapacite())
+                        .estActive(app.getEspace().getEstActive())
+                        .role(app.getRoleAttribue())
+                        .rejointA(app.getRejointA())
+                        .build())
+                .toList();
     }
-
 
     @Override
     public List<UtilisateurInvitationDTO> getInvitationByUtilisateur(Integer utilisateurId) {
@@ -116,49 +115,57 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UtilisateurNotificationDTO> getNotificationsByUtilisateur(Integer utilisateurId) {
 
         List<Notification> notifications =
-                notificationRepository.findByUtilisateurId(utilisateurId);
+                notificationRepository.findByUtilisateurIdOrderByEnvoyeADesc(utilisateurId);
 
         return notifications.stream()
                 .map(notification -> {
 
                     ActionItem actionItem = notification.getActionItem();
-                    Utilisateur assigneA = actionItem.getAssigneA();
-                    Utilisateur createur = actionItem.getCreateur();
-                    Session session = actionItem.getSession();
+                    Invitation invitation = notification.getInvitation();
 
-                    return UtilisateurNotificationDTO.builder()
+                    UtilisateurNotificationDTO.UtilisateurNotificationDTOBuilder builder =
+                            UtilisateurNotificationDTO.builder()
+                                    .notificationId(notification.getId())
+                                    .description(notification.getDescription())
+                                    .envoyeA(notification.getEnvoyeA())
+                                    .luA(notification.getLuA());
 
-                            .notificationId(notification.getId())
-                            .description(notification.getDescription())
-                            .envoyeA(notification.getEnvoyeA())
-                            .luA(notification.getLuA())
+                    if (actionItem != null) {
 
-                            .actionItemId(actionItem.getId())
-                            .titre(actionItem.getTitre())
-                            .actionDescription(actionItem.getDescription())
-                            .echeance(actionItem.getEcheance())
-                            .status(actionItem.getStatus())
-                            .creeA(actionItem.getCreeA())
+                        Utilisateur assigneA = actionItem.getAssigneA();
+                        Utilisateur createur = actionItem.getCreateur();
+                        Session session = actionItem.getSession();
 
-                            .assigneAId(assigneA != null ? assigneA.getId() : null)
-                            .assigneANom(assigneA != null ? assigneA.getNom() : null)
-                            .assigneAPrenom(assigneA != null ? assigneA.getPrenom() : null)
-                            .assigneAEmail(assigneA != null ? assigneA.getEmail() : null)
+                        builder
+                                .actionItemId(actionItem.getId())
+                                .titre(actionItem.getTitre())
+                                .actionDescription(actionItem.getDescription())
+                                .echeance(actionItem.getEcheance())
+                                .status(actionItem.getStatus())
+                                .creeA(actionItem.getCreeA())
+                                .assigneAId(assigneA != null ? assigneA.getId() : null)
+                                .assigneANom(assigneA != null ? assigneA.getNom() : null)
+                                .assigneAPrenom(assigneA != null ? assigneA.getPrenom() : null)
+                                .assigneAEmail(assigneA != null ? assigneA.getEmail() : null)
+                                .createurId(createur != null ? createur.getId() : null)
+                                .createurPrenom(createur != null ? createur.getPrenom() : null)
+                                .createurNom(createur != null ? createur.getNom() : null)
+                                .createurEmail(createur != null ? createur.getEmail() : null)
+                                .sessionId(session != null ? session.getId() : null)
+                                .statusSession(session != null ? session.getStatus() : null)
+                                .commencerA(session != null ? session.getCommenceA() : null)
+                                .termineA(session != null ? session.getTermineA() : null);
+                    }
 
-                            .createurId(createur != null ? createur.getId() : null)
-                            .createurPrenom(createur != null ? createur.getPrenom() : null)
-                            .createurNom(createur != null ? createur.getNom() : null)
-                            .createurEmail(createur != null ? createur.getEmail() : null)
+                    if (invitation != null) {
+                        builder.invitationId(invitation.getId());
+                    }
 
-                            .sessionId(session != null ? session.getId() : null)
-                            .statusSession(session != null ? session.getStatus() : null)
-                            .commencerA(session != null ? session.getCommenceA() : null)
-                            .termineA(session != null ? session.getTermineA() : null)
-
-                            .build();
+                    return builder.build();
                 })
                 .toList();
     }
@@ -191,42 +198,27 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                                             ));
 
                     return UtilisateurSessionDTO.builder()
-
-
                             .participantId(participant.getId())
                             .pseudo(participant.getPseudo())
                             .roleSession(participant.getRoleSession())
-
-
                             .utilisateurId(participant.getUtilisateur().getId())
                             .prenom(participant.getUtilisateur().getPrenom())
                             .nom(participant.getUtilisateur().getNom())
                             .email(participant.getUtilisateur().getEmail())
-
-
                             .sessionId(participant.getSession().getId())
-
-
                             .espaceId(espace.getId())
                             .nomEspace(espace.getNom())
                             .nomEquipe(espace.getNomEquipe())
                             .capacite(espace.getCapacite())
-
-
                             .roleAttribue(appartenance.getRoleAttribue())
-
                             .typeSessionId(typeSession.getId())
                             .typeSessionTitre(typeSession.getName())
-
                             .sprintId(sprint.getId())
                             .sprintTitre(sprint.getTitre())
-
                             .build();
-
                 })
                 .toList();
     }
-
 
     @Override
     public List<UtilisateurDailyContentDTO> getDailyContentsByUtilisateur(Integer utilisateurId) {
@@ -243,27 +235,18 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                     UserStory userStory = sprintUserStory.getUserStory();
 
                     return UtilisateurDailyContentDTO.builder()
-
-                            // DailyContent
                             .dailyContentId(dc.getId())
                             .contenu(dc.getContenu())
                             .typeContenu(dc.getTypeContenu())
                             .creeA(dc.getCreeA())
-
-                            // ParticipantSession
                             .participantId(dc.getParticipantSession().getId())
                             .pseudo(dc.getParticipantSession().getPseudo())
                             .roleSession(dc.getParticipantSession().getRoleSession())
-
-                            // Sprint
                             .sprintId(sprint.getId())
                             .sprintTitre(sprint.getTitre())
                             .commenceDe(sprint.getCommFinanceDeDate())
-
-                            // User Story
                             .userStoryId(userStory.getId())
                             .userStoryTitre(userStory.getTitre())
-
                             .build();
                 })
                 .toList();
@@ -271,10 +254,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     public UtilisateurRetroDTO getRetroByUtilisateur(Integer utilisateurId) {
-
-        // ----------------------------
-        // Load data
-        // ----------------------------
 
         List<NoteRetro> notes =
                 noteRetroRepository.findByUtilisateurId(utilisateurId);
@@ -284,12 +263,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         List<ActionItem> actionItems =
                 actionItemRepository.findByCreateurId(utilisateurId);
-
-
-
-        // ----------------------------
-        // Notes
-        // ----------------------------
 
         List<UtilisateurRetroNoteDTO> notesDTO =
                 notes.stream()
@@ -310,31 +283,19 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                             Sprint sprint = session.getSprint();
 
                             return UtilisateurRetroNoteDTO.builder()
-
                                     .noteId(note.getId())
                                     .contenu(note.getContenu())
                                     .typeColonne(note.getTypeColonne())
                                     .creeA(note.getCreeA())
-
                                     .participantId(participant.getId())
                                     .pseudo(participant.getPseudo())
                                     .roleSession(participant.getRoleSession())
-
                                     .sessionId(session.getId())
-
                                     .sprintId(sprint.getId())
                                     .sprintTitre(sprint.getTitre())
-
                                     .build();
-
                         })
                         .toList();
-
-
-
-        // ----------------------------
-        // Votes
-        // ----------------------------
 
         List<UtilisateurVoteRetroDTO> votesDTO =
                 votes.stream()
@@ -344,47 +305,25 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                                     vote.getNoteRetro();
 
                             Sprint sprint =
-                                    vote.getSession()
-                                            .getSprint();
+                                    vote.getSession().getSprint();
 
                             return UtilisateurVoteRetroDTO.builder()
-
                                     .voteId(vote.getId())
                                     .voteA(vote.getCreeA())
-
                                     .noteId(note.getId())
                                     .contenu(note.getContenu())
                                     .typeColonne(note.getTypeColonne())
-
                                     .auteurId(note.getUtilisateur().getId())
                                     .auteurNom(note.getUtilisateur().getNom())
                                     .auteurPrenom(note.getUtilisateur().getPrenom())
-
-                                    .participantId(
-                                            vote.getParticipantSession().getId()
-                                    )
-
-                                    .pseudo(
-                                            vote.getParticipantSession().getPseudo()
-                                    )
-
-                                    .roleSession(
-                                            vote.getParticipantSession().getRoleSession()
-                                    )
-
+                                    .participantId(vote.getParticipantSession().getId())
+                                    .pseudo(vote.getParticipantSession().getPseudo())
+                                    .roleSession(vote.getParticipantSession().getRoleSession())
                                     .sprintId(sprint.getId())
                                     .sprintTitre(sprint.getTitre())
-
                                     .build();
-
                         })
                         .toList();
-
-
-
-        // ----------------------------
-        // Action Items
-        // ----------------------------
 
         List<UtilisateurRetroActionItemDTO> actionItemsDTO =
                 actionItems.stream()
@@ -394,52 +333,29 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                                     action.getSession().getSprint();
 
                             return UtilisateurRetroActionItemDTO.builder()
-
                                     .actionItemId(action.getId())
-
                                     .titre(action.getTitre())
-
                                     .description(action.getDescription())
-
                                     .echeance(action.getEcheance())
-
                                     .status(action.getStatus())
-
                                     .creeA(action.getCreeA())
-
                                     .createurId(action.getCreateur().getId())
                                     .createurNom(action.getCreateur().getNom())
-
                                     .assigneId(action.getAssigneA().getId())
                                     .assigneNom(action.getAssigneA().getNom())
-
                                     .sessionId(action.getSession().getId())
-
                                     .sprintId(sprint.getId())
                                     .sprintTitre(sprint.getTitre())
-
                                     .build();
-
                         })
                         .toList();
 
-
-
-        // ----------------------------
-        // Final DTO
-        // ----------------------------
-
         return UtilisateurRetroDTO.builder()
-
                 .notes(notesDTO)
-
                 .votes(votesDTO)
-
                 .actionItems(actionItemsDTO)
-
                 .build();
     }
-
 
     @Override
     public UtilisateurPokerDTO getPokerByUtilisateur(Integer utilisateurId) {
@@ -451,87 +367,55 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 votes.stream()
                         .map(vote -> {
 
-
                             TourEstimation tour = vote.getTourEstimation();
-
 
                             SelectionUserStorySession selection =
                                     tour.getSelectionUserStorySession();
 
-
                             SprintUserStory sprintUserStory =
                                     selection.getSprintUserStory();
-
 
                             Sprint sprint =
                                     sprintUserStory.getSprint();
 
-
-                            UserStory userStory =
-                                    sprintUserStory.getUserStory();
-
+                            UserStory userStory = sprintUserStory.getUserStory();
 
                             ParticipantSession participant =
                                     vote.getParticipantSession();
-
 
                             Session session =
                                     participant.getSession();
 
                             return UtilisateurPokerEstimationDTO.builder()
-
-
                                     .participantId(participant.getId())
                                     .pseudo(participant.getPseudo())
                                     .roleSession(participant.getRoleSession())
-
                                     .sessionId(session.getId())
                                     .sessionCommenceA(session.getCommenceA())
                                     .sessionTermineA(session.getTermineA())
                                     .statutSession(session.getStatus())
-
-
                                     .sprintId(sprint.getId())
                                     .sprintTitre(sprint.getTitre())
                                     .objectifSprint(sprint.getObjectif())
-
-
                                     .sprintUserStoryId(sprintUserStory.getId())
-
-                                    .statutSprintUserStory(
-                                            sprintUserStory.getStatut()
-                                    )
-                                    .commitA(
-                                            sprintUserStory.getCommitA()
-                                    )
-                                    .sprintUserStoryTermineA(
-                                            sprintUserStory.getTermineA()
-                                    )
-                                    .estimationFinale(
-                                            sprintUserStory.getEstimationFinale()
-                                    )
-
-
+                                    .statutSprintUserStory(sprintUserStory.getStatut())
+                                    .commitA(sprintUserStory.getCommitA())
+                                    .sprintUserStoryTermineA(sprintUserStory.getTermineA())
+                                    .estimationFinale(sprintUserStory.getEstimationFinale())
                                     .userStoryId(userStory.getId())
                                     .titre(userStory.getTitre())
                                     .description(userStory.getDescription())
                                     .priorite(userStory.getPriorite())
                                     .storyPoints(userStory.getStoryPoints())
-
-
                                     .tourId(tour.getId())
                                     .numeroTour(tour.getNumeroTour())
                                     .revele(tour.getRevele())
                                     .valeurFinale(tour.getValeurFinale())
-
-
                                     .voteId(vote.getId())
                                     .valeurVote(vote.getValeur())
                                     .statutVote(vote.getStatut())
                                     .voteA(vote.getCreeA())
-
                                     .build();
-
                         })
                         .toList();
 

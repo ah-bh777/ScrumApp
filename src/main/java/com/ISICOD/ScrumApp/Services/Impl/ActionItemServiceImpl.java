@@ -1,27 +1,46 @@
 package com.ISICOD.ScrumApp.Services.Impl;
 
-import com.ISICOD.ScrumApp.DTOs.ActionItem.ActionItemDetailsDTO;
-import com.ISICOD.ScrumApp.DTOs.ActionItem.NotificationResumeDTO;
-import com.ISICOD.ScrumApp.DTOs.ActionItem.SessionResumeDTO;
-import com.ISICOD.ScrumApp.DTOs.ActionItem.UtilisateurResumeDTO;
+import com.ISICOD.ScrumApp.DTOs.ActionItem.*;
 import com.ISICOD.ScrumApp.Entities.ActionItem;
+import com.ISICOD.ScrumApp.Entities.Notification;
+import com.ISICOD.ScrumApp.Entities.Session;
 import com.ISICOD.ScrumApp.Repositories.ActionItemRepository;
+import com.ISICOD.ScrumApp.Repositories.NotificationRepository;
 import com.ISICOD.ScrumApp.Services.ActionItemService;
+import com.ISICOD.ScrumApp.Services.Impl.notificationPublisher.NotificationEventPublisher;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import com.ISICOD.ScrumApp.Entities.Notification;
+import com.ISICOD.ScrumApp.Repositories.NotificationRepository;
+import com.ISICOD.ScrumApp.Services.Impl.notificationPublisher.NotificationEventPublisher;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Objects;
+
 
 @Service
 @RequiredArgsConstructor
 public class ActionItemServiceImpl implements ActionItemService {
 
     private final ActionItemRepository actionItemRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationEventPublisher notificationEventPublisher;
+
 
     @Override
+    @Transactional
     public ActionItem createActionItem(ActionItem actionItem) {
-        return actionItemRepository.save(actionItem);
+        ActionItem saved = actionItemRepository.save(actionItem);
+
+        notifyAssignee(saved);
+
+        return saved;
     }
 
     @Override
@@ -35,12 +54,16 @@ public class ActionItemServiceImpl implements ActionItemService {
     }
 
     @Override
+    @Transactional
     public ActionItem updateActionItem(Integer id, ActionItem actionItem) {
 
         ActionItem existing = actionItemRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("ActionItem introuvable avec id : " + id));
 
+        Integer previousAssigneeId = existing.getAssigneA() != null
+                ? existing.getAssigneA().getId()
+                : null;
 
         if (actionItem.getTitre() != null) {
             existing.setTitre(actionItem.getTitre());
@@ -78,7 +101,18 @@ public class ActionItemServiceImpl implements ActionItemService {
             existing.setAssigneA(actionItem.getAssigneA());
         }
 
-        return actionItemRepository.save(existing);
+        ActionItem saved = actionItemRepository.save(existing);
+
+        Integer newAssigneeId = saved.getAssigneA() != null
+                ? saved.getAssigneA().getId()
+                : null;
+
+        if (newAssigneeId != null
+                && !Objects.equals(previousAssigneeId, newAssigneeId)) {
+            notifyAssignee(saved);
+        }
+
+        return saved;
     }
 
     @Override
@@ -155,5 +189,47 @@ public class ActionItemServiceImpl implements ActionItemService {
                 )
 
                 .build();
+    }
+
+    private void notifyAssignee(ActionItem actionItem) {
+
+        if (actionItem.getAssigneA() == null) {
+            return;
+        }
+
+        Notification notification = Notification.builder()
+                .utilisateur(actionItem.getAssigneA())
+                .actionItem(actionItem)
+                .description(
+                        "Un Action Item vous a été assigné : "
+                                + actionItem.getTitre()
+                )
+                .build();
+
+        Notification savedNotification =
+                notificationRepository.save(notification);
+
+        notificationEventPublisher.publish(savedNotification);
+    }
+
+
+    @Override
+    @Transactional
+    public ActionItemNavigationDTO getNavigationContext(Integer actionItemId) {
+
+        ActionItem actionItem = actionItemRepository.findById(actionItemId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Action Item introuvable avec id : " + actionItemId
+                ));
+
+        Session session = actionItem.getSession();
+
+        return new ActionItemNavigationDTO(
+                actionItem.getId(),
+                session.getSprint().getId(),
+                session.getEspace().getId(),
+                session.getId()
+        );
     }
 }

@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Repositories;
 
 import com.ISICOD.ScrumApp.Entities.DailyContent;
+import com.ISICOD.ScrumApp.Entities.ParticipantSession;
 import com.ISICOD.ScrumApp.Enums.TypeDailyContent;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -28,4 +29,10 @@ public interface DailyContentRepository
             Integer sprintId,
             TypeDailyContent typeContenu
     );
+
+    List<DailyContent> findBySessionId(Integer sessionId);
+
+    List<ParticipantSession> findBySessionIdOrderByIdAsc(Integer sessionId);
+
+    List<DailyContent> findBySessionIdOrderByCreeAAsc(Integer sessionId);
 }

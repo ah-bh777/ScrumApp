@@ -45,6 +45,6 @@ public class DailyContent {
     private ParticipantSession participantSession;
 
     @ManyToOne
-    @JoinColumn(name = "sprint_user_story_id" , nullable = false)
+    @JoinColumn(name = "sprint_user_story_id", nullable = true)
     private SprintUserStory sprintUserStory;
 }

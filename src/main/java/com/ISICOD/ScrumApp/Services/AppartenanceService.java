@@ -1,22 +1,23 @@
+
 package com.ISICOD.ScrumApp.Services;
 
-import com.ISICOD.ScrumApp.Entities.Appartenance;
-import com.ISICOD.ScrumApp.Entities.Utilisateur;
-
-import java.util.List;
-import java.util.Optional;
+import com.ISICOD.ScrumApp.Enums.RoleEspace;
 
 public interface AppartenanceService {
 
-    Appartenance createAppartenance(Appartenance appartenance);
+    boolean estMembre(
+            Integer utilisateurId,
+            Integer espaceId
+    );
 
-    Optional<Appartenance> getAppartenanceById(Integer id);
+    boolean possedeRole(
+            Integer utilisateurId,
+            Integer espaceId,
+            RoleEspace role
+    );
 
-    List<Appartenance> getAllAppartenances();
-
-    Appartenance updateAppartenance(Integer id, Appartenance appartenance);
-
-    void deleteAppartenance(Integer id);
-
-
+    boolean estScrumMaster(
+            Integer utilisateurId,
+            Integer espaceId
+    );
 }

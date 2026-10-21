@@ -1,12 +1,13 @@
+
 package com.ISICOD.ScrumApp.Controllers;
 
-import com.ISICOD.ScrumApp.Entities.Invitation;
+import com.ISICOD.ScrumApp.DTOs.Invitation.AcceptInvitationRequest;
 import com.ISICOD.ScrumApp.Services.InvitationService;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/invitations")
@@ -15,47 +16,32 @@ public class InvitationController {
 
     private final InvitationService invitationService;
 
-    @PostMapping
-    public ResponseEntity<Invitation> createInvitation(
-            @RequestBody Invitation invitation) {
+    // ==========================================
+    // ACCEPT INVITATION
+    // ==========================================
 
-        return ResponseEntity.ok(
-                invitationService.createInvitation(invitation)
-        );
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Invitation> getInvitationById(
-            @PathVariable Integer id) {
-
-        return invitationService.getInvitationById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Invitation>> getAllInvitations() {
-
-        return ResponseEntity.ok(
-                invitationService.getAllInvitations()
-        );
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<Invitation> updateInvitation(
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<Void> accepterInvitation(
             @PathVariable Integer id,
-            @RequestBody Invitation invitation) {
+            @RequestBody AcceptInvitationRequest request
+    ) {
 
-        return ResponseEntity.ok(
-                invitationService.updateInvitation(id, invitation)
-        );
+        invitationService.accepterInvitation(id, request);
+
+        return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInvitation(
-            @PathVariable Integer id) {
+    // ==========================================
+    // DECLINE INVITATION
+    // ==========================================
 
-        invitationService.deleteInvitation(id);
+    @PostMapping("/{id}/decline")
+    public ResponseEntity<Void> refuserInvitation(
+            @PathVariable Integer id,
+            @RequestBody AcceptInvitationRequest request
+    ) {
+
+        invitationService.refuserInvitation(id, request);
 
         return ResponseEntity.noContent().build();
     }

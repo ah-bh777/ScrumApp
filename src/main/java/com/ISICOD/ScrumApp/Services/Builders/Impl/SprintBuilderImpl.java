@@ -19,86 +19,153 @@ public class SprintBuilderImpl implements SprintBuilder {
     @Override
     public SprintDetailsDTO build(Sprint sprint) {
 
+        // ============================================================
+        // USER STORIES
+        // ============================================================
+
         List<SprintStoryDTO> stories =
-                sprint.getSprintUserStories()
+                sprint.getSprintUserStories() == null
+                        ? List.of()
+                        : sprint.getSprintUserStories()
                         .stream()
                         .map(this::buildStory)
                         .toList();
 
-        SessionSummaryDTO poker =
-                sprint.getSessions()
-                        .stream()
-                        .filter(session ->
-                                session.getTypeSession().getCode() == TypeSessionCode.POKER)
-                        .findFirst()
-                        .map(this::buildSessionSummary)
-                        .orElse(null);
 
-        SessionSummaryDTO retro =
-                sprint.getSessions()
-                        .stream()
-                        .filter(session ->
-                                session.getTypeSession().getCode() == TypeSessionCode.RETRO)
-                        .findFirst()
-                        .map(this::buildSessionSummary)
-                        .orElse(null);
+        // ============================================================
+        // POKERS
+        // ============================================================
 
-        List<SessionSummaryDTO> dailies =
-                sprint.getSessions()
+        List<SessionSummaryDTO> pokers =
+                sprint.getSessions() == null
+                        ? List.of()
+                        : sprint.getSessions()
                         .stream()
                         .filter(session ->
-                                session.getTypeSession().getCode() == TypeSessionCode.DAILY)
+                                session.getTypeSession() != null
+                                        && session.getTypeSession().getCode()
+                                        == TypeSessionCode.POKER
+                        )
                         .map(this::buildSessionSummary)
                         .toList();
 
-        // ==========================================
-        // Sprint Metrics
-        // ==========================================
 
-        int totalStories = sprint.getSprintUserStories().size();
+        // ============================================================
+        // RETROS
+        // ============================================================
+
+        List<SessionSummaryDTO> retros =
+                sprint.getSessions() == null
+                        ? List.of()
+                        : sprint.getSessions()
+                        .stream()
+                        .filter(session ->
+                                session.getTypeSession() != null
+                                        && session.getTypeSession().getCode()
+                                        == TypeSessionCode.RETRO
+                        )
+                        .map(this::buildSessionSummary)
+                        .toList();
+
+
+        // ============================================================
+        // DAILIES
+        // ============================================================
+
+        List<SessionSummaryDTO> dailies =
+                sprint.getSessions() == null
+                        ? List.of()
+                        : sprint.getSessions()
+                        .stream()
+                        .filter(session ->
+                                session.getTypeSession() != null
+                                        && session.getTypeSession().getCode()
+                                        == TypeSessionCode.DAILY
+                        )
+                        .map(this::buildSessionSummary)
+                        .toList();
+
+
+        // ============================================================
+        // SPRINT METRICS
+        // ============================================================
+
+        int totalStories =
+                sprint.getSprintUserStories() == null
+                        ? 0
+                        : sprint.getSprintUserStories().size();
+
 
         int completedStories =
-                (int) sprint.getSprintUserStories()
+                sprint.getSprintUserStories() == null
+                        ? 0
+                        : (int) sprint.getSprintUserStories()
                         .stream()
                         .filter(story ->
-                                story.getEtatExecution() == EtatExecutionSprint.TERMINEE)
+                                story.getEtatExecution()
+                                        == EtatExecutionSprint.TERMINEE
+                        )
                         .count();
 
+
         int totalStoryPoints =
-                sprint.getSprintUserStories()
+                sprint.getSprintUserStories() == null
+                        ? 0
+                        : sprint.getSprintUserStories()
                         .stream()
                         .mapToInt(story ->
-                                story.getUserStory().getStoryPoints() == null
+                                story.getUserStory() == null
+                                        || story.getUserStory().getStoryPoints() == null
                                         ? 0
-                                        : story.getUserStory().getStoryPoints())
+                                        : story.getUserStory().getStoryPoints()
+                        )
                         .sum();
 
+
         int completedStoryPoints =
-                sprint.getSprintUserStories()
+                sprint.getSprintUserStories() == null
+                        ? 0
+                        : sprint.getSprintUserStories()
                         .stream()
                         .filter(story ->
-                                story.getEtatExecution() == EtatExecutionSprint.TERMINEE)
+                                story.getEtatExecution()
+                                        == EtatExecutionSprint.TERMINEE
+                        )
                         .mapToInt(story ->
-                                story.getUserStory().getStoryPoints() == null
+                                story.getUserStory() == null
+                                        || story.getUserStory().getStoryPoints() == null
                                         ? 0
-                                        : story.getUserStory().getStoryPoints())
+                                        : story.getUserStory().getStoryPoints()
+                        )
                         .sum();
+
 
         int progress =
                 totalStories == 0
                         ? 0
                         : (completedStories * 100) / totalStories;
 
+
+        // ============================================================
+        // BUILD FINAL DTO
+        // ============================================================
+
         return SprintDetailsDTO.builder()
 
-                .sprintId(sprint.getId())
+                .sprintId(
+                        sprint.getId()
+                )
 
                 .espaceId(
-                        sprint.getEspace().getId()
+                        sprint.getEspace() != null
+                                ? sprint.getEspace().getId()
+                                : null
                 )
 
                 .workspaceName(
-                        sprint.getEspace().getNom()
+                        sprint.getEspace() != null
+                                ? sprint.getEspace().getNom()
+                                : null
                 )
 
                 .titre(
@@ -125,16 +192,23 @@ public class SprintBuilderImpl implements SprintBuilder {
                         sprint.getCreeA()
                 )
 
-                .poker(
-                        poker
+                // Multiple pokers
+                .pokers(
+                        pokers
                 )
 
-                .retro(
-                        retro
+                // Multiple retros
+                .retros(
+                        retros
                 )
 
+                // Multiple dailies
                 .dailies(
                         dailies
+                )
+
+                .userStories(
+                        stories
                 )
 
                 .completedStories(
@@ -157,14 +231,17 @@ public class SprintBuilderImpl implements SprintBuilder {
                         progress
                 )
 
-                .userStories(
-                        stories
-                )
-
                 .build();
     }
 
-    private SprintStoryDTO buildStory(SprintUserStory sprintUserStory) {
+
+    // ============================================================
+    // USER STORY
+    // ============================================================
+
+    private SprintStoryDTO buildStory(
+            SprintUserStory sprintUserStory
+    ) {
 
         return SprintStoryDTO.builder()
 
@@ -233,7 +310,14 @@ public class SprintBuilderImpl implements SprintBuilder {
                 .build();
     }
 
-    private SessionSummaryDTO buildSessionSummary(Session session) {
+
+    // ============================================================
+    // SESSION SUMMARY
+    // ============================================================
+
+    private SessionSummaryDTO buildSessionSummary(
+            Session session
+    ) {
 
         return SessionSummaryDTO.builder()
 

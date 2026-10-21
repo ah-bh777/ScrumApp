@@ -1,10 +1,11 @@
+
 package com.ISICOD.ScrumApp.Entities;
 
-import com.ISICOD.ScrumApp.Enums.RoleEspace;
 import com.ISICOD.ScrumApp.Enums.RoleSession;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -45,4 +46,20 @@ public class ParticipantSession {
 
     @OneToMany(mappedBy = "participantSession")
     private List<VotePoker> votesPoker;
+
+    @Column(nullable = false)
+    private Boolean actif;
+
+    @Builder.Default
+    @Column(name = "soumise", nullable = false)
+    private Boolean soumise = false;
+
+    @Column(name = "soumise_a")
+    private LocalDateTime soumise_a;
+
+    @Column(name = "rejoint_a")
+    private LocalDateTime rejointA;
+
+    @Column(name = "quitte_a")
+    private LocalDateTime quitteA;
 }

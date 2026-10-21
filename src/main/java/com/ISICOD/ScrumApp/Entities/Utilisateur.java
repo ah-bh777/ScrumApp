@@ -30,6 +30,9 @@ public class Utilisateur {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private String password;
+
     @Column(name = "cree_a", nullable = false)
     private LocalDate creeA;
 
@@ -65,6 +68,7 @@ public class Utilisateur {
 
     @OneToMany(mappedBy = "utilisateur")
     private List<VotePoker> votesPoker;
+
 
 
 }

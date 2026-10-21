@@ -1,10 +1,17 @@
+
 package com.ISICOD.ScrumApp.Controllers;
 
 import com.ISICOD.ScrumApp.Entities.DailyContent;
 import com.ISICOD.ScrumApp.Services.DailyContentService;
+import com.ISICOD.ScrumApp.Services.DailyReportService;
+
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -18,6 +25,13 @@ public class DailyContentController {
 
     private final DailyContentService dailyContentService;
 
+    // Service responsible for generating the Daily Scrum PDF
+    private final DailyReportService dailyReportService;
+
+
+    // ============================================================
+    // CREATE DAILY CONTENT
+    // ============================================================
 
     @PostMapping
     public ResponseEntity<DailyContent> createDailyContent(
@@ -25,9 +39,15 @@ public class DailyContentController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(dailyContentService.createDailyContent(dailyContent));
+                .body(
+                        dailyContentService.createDailyContent(dailyContent)
+                );
     }
 
+
+    // ============================================================
+    // GET DAILY CONTENT BY ID
+    // ============================================================
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getDailyContentById(
@@ -37,7 +57,7 @@ public class DailyContentController {
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElseGet(() -> {
 
-                    Map<String,Object> error = new HashMap<>();
+                    Map<String, Object> error = new HashMap<>();
 
                     error.put("message", "DailyContent not found");
                     error.put("id", id);
@@ -56,6 +76,7 @@ public class DailyContentController {
                 dailyContentService.getDailyContentAll()
         );
     }
+
 
 
     @PatchMapping("/{id}")
@@ -79,5 +100,29 @@ public class DailyContentController {
                 .noContent()
                 .build();
     }
-    
+
+
+
+    @GetMapping(
+            value = "/sessions/{sessionId}/report",
+            produces = MediaType.APPLICATION_PDF_VALUE
+    )
+    public ResponseEntity<byte[]> downloadDailyReport(
+            @PathVariable Integer sessionId) {
+
+        byte[] pdf = dailyReportService.generatePdf(sessionId);
+
+        String filename = "daily-scrum-"
+                + sessionId
+                + "-rapport.pdf";
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + filename + "\""
+                )
+                .contentLength(pdf.length)
+                .body(pdf);
+    }
 }

@@ -19,6 +19,9 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
+    private String titre;
+
     @Column(name = "commence_a")
     private LocalDateTime commenceA;
 

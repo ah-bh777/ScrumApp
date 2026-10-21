@@ -29,9 +29,9 @@
 
         private LocalDateTime creeA;
 
-        private SessionSummaryDTO poker;
+        private List<SessionSummaryDTO> pokers;
 
-        private SessionSummaryDTO retro;
+        private List<SessionSummaryDTO> retros;
 
         private List<SessionSummaryDTO> dailies;
 

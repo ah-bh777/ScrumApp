@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,13 +24,6 @@ public class Notification {
     @Column(name = "envoye_a")
     private LocalDateTime envoyeA;
 
-    @PrePersist
-    public void prePersist() {
-        if (envoyeA == null) {
-            envoyeA = LocalDateTime.now();
-        }
-    }
-
     @Column(name = "lu_a")
     private LocalDateTime luA;
 
@@ -38,6 +32,17 @@ public class Notification {
     private Utilisateur utilisateur;
 
     @ManyToOne
-    @JoinColumn(name = "action_item_id", nullable = false)
+    @JoinColumn(name = "action_item_id")
     private ActionItem actionItem;
+
+    @ManyToOne
+    @JoinColumn(name = "invitation_id")
+    private Invitation invitation;
+
+    @PrePersist
+    public void prePersist() {
+        if (envoyeA == null) {
+            envoyeA = LocalDateTime.now();
+        }
+    }
 }

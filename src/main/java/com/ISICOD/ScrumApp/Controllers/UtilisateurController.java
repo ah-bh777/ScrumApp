@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map;import com.ISICOD.ScrumApp.DTOs.Invitation.PendingInvitationResponse;
+import com.ISICOD.ScrumApp.Services.InvitationService;
 
 @RestController
 @RequestMapping("/api/utilisateurs")
@@ -18,6 +19,7 @@ import java.util.Map;
 public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
+    private final InvitationService invitationService;
 
     @PostMapping
     public ResponseEntity<Utilisateur> createUtilisateur(
@@ -76,14 +78,16 @@ public class UtilisateurController {
         return ResponseEntity.ok(utilisateurService.getUtilisateursEspace(id));
     }
 
-    @GetMapping("/{id}/invitations")
-    public ResponseEntity<List<UtilisateurInvitationDTO>> getInvitationsByUtilisateur(
-            @PathVariable Integer id) {
 
+    @GetMapping("/{id}/invitations")
+    public ResponseEntity<List<PendingInvitationResponse>> getInvitationsByUtilisateur(
+            @PathVariable Integer id
+    ) {
         return ResponseEntity.ok(
-                utilisateurService.getInvitationByUtilisateur(id)
+                invitationService.getPendingInvitations(id)
         );
     }
+
 
     @GetMapping("/{id}/notifications")
     public ResponseEntity<List<UtilisateurNotificationDTO>> getNotificationsByUtilisateur(

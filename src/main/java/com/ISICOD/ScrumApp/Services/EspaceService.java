@@ -1,9 +1,9 @@
 package com.ISICOD.ScrumApp.Services;
 
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceDashboardDTO;
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberDTO;
-import com.ISICOD.ScrumApp.DTOs.Espace.EspaceMemberListDTO;
+
+import com.ISICOD.ScrumApp.DTOs.Espace.*;
 import com.ISICOD.ScrumApp.Entities.Espace;
+import com.ISICOD.ScrumApp.DTOs.Espace.LeaveWorkspaceRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,5 +24,32 @@ public interface EspaceService {
 
     List<EspaceMemberListDTO> getEspaceMembers(
             Integer espaceId
+    );
+    CreateEspaceResponse createEspaceWithScrumMaster(
+            CreateEspaceRequest request
+    );
+
+    List<UserEspaceDTO> getEspacesByUtilisateur(Integer utilisateurId);
+
+    void changerRoleMembre(
+            Integer espaceId,
+            Integer membreId,
+            ChangeMemberRoleRequest request
+    );
+
+    void supprimerMembre(
+            Integer espaceId,
+            Integer membreId,
+            RemoveMemberRequest request
+    );
+
+    void quitterEspace(
+            Integer espaceId,
+            LeaveWorkspaceRequest request
+    );
+
+    void transfererScrumMaster(
+            Integer espaceId,
+            TransferScrumMasterRequest request
     );
 }

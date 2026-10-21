@@ -19,6 +19,8 @@ public class DailyContentDTO {
 
     private Integer userStoryId;
 
+    private String participantPseudo;
+
     private String userStoryTitre;
 
     private TypeDailyContent type;

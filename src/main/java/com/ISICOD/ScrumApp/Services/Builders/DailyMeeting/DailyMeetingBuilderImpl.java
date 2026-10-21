@@ -68,20 +68,12 @@ public class DailyMeetingBuilderImpl implements DailyMeetingBuilder {
                 .build();
     }
 
+
     @Override
     public DailyParticipantDTO buildParticipant(
             ParticipantSession participant,
             List<DailyContent> contents
     ) {
-
-        List<DailyContent> participantContents = contents.stream()
-                .filter(content ->
-                        content.getParticipantSession().getId()
-                                .equals(participant.getId())
-                )
-                .toList();
-
-        boolean submitted = !participantContents.isEmpty();
 
         return DailyParticipantDTO.builder()
                 .participantId(participant.getId())
@@ -92,33 +84,53 @@ public class DailyMeetingBuilderImpl implements DailyMeetingBuilder {
                 )
                 .pseudo(participant.getPseudo())
                 .roleSession(participant.getRoleSession())
-                .submitted(submitted)
-                .submittedAt(
-                        submitted
-                                ? participantContents.stream()
-                                .map(DailyContent::getCreeA)
-                                .max(java.util.Comparator.naturalOrder())
-                                .orElse(null)
-                                : null
-                )
+                .submitted(Boolean.TRUE.equals(participant.getSoumise()))
+                .submittedAt(participant.getSoumise_a())
                 .build();
     }
+
 
     @Override
     public DailyContentDTO buildContent(DailyContent content) {
 
         SprintUserStory sprintUserStory = content.getSprintUserStory();
 
+        ParticipantSession participant = content.getParticipantSession();
+
         return DailyContentDTO.builder()
                 .dailyContentId(content.getId())
-                .participantId(content.getParticipantSession().getId())
-                .sprintUserStoryId(sprintUserStory.getId())
+
+                // Preserve author information even after leaving
+                .participantId(
+                        participant != null
+                                ? participant.getId()
+                                : null
+                )
+                .participantPseudo(
+                        participant != null
+                                ? participant.getPseudo()
+                                : null
+                )
+
+                // User Story is optional
+                .sprintUserStoryId(
+                        sprintUserStory != null
+                                ? sprintUserStory.getId()
+                                : null
+                )
                 .userStoryId(
-                        sprintUserStory.getUserStory().getId()
+                        sprintUserStory != null
+                                && sprintUserStory.getUserStory() != null
+                                ? sprintUserStory.getUserStory().getId()
+                                : null
                 )
                 .userStoryTitre(
-                        sprintUserStory.getUserStory().getTitre()
+                        sprintUserStory != null
+                                && sprintUserStory.getUserStory() != null
+                                ? sprintUserStory.getUserStory().getTitre()
+                                : null
                 )
+
                 .type(content.getTypeContenu())
                 .description(content.getContenu())
                 .createdAt(content.getCreeA())
@@ -142,4 +154,6 @@ public class DailyMeetingBuilderImpl implements DailyMeetingBuilder {
                 .etatExecution(sprintUserStory.getEtatExecution())
                 .build();
     }
+
+
 }

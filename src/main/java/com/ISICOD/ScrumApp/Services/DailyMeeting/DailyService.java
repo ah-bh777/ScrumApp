@@ -1,18 +1,19 @@
 package com.ISICOD.ScrumApp.Services.DailyMeeting;
 
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyContentRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyContentUpdateDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailySessionRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.DailyStoryOptionDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.ParticipantJoinRequestDTO;
-import com.ISICOD.ScrumApp.DTOs.DailyMeeting.SessionStatusUpdateDTO;
+import com.ISICOD.ScrumApp.DTOs.DailyMeeting.*;
 
 import java.util.List;
 
 public interface DailyService {
 
     DailyDTO getDaily(Integer sessionId);
+
+    DailyDTO getActiveDaily(Integer espaceId);
+
+    DailyDTO leaveDaily(
+            Integer sessionId,
+            Integer participantId
+    );
 
     List<DailyStoryOptionDTO> getDailyStories(Integer sprintId);
 
@@ -49,5 +50,15 @@ public interface DailyService {
             Integer sessionId,
             Integer utilisateurId,
             SessionStatusUpdateDTO request
+    );
+
+    DailyDTO submitDaily(
+            Integer sessionId,
+            DailySubmissionRequestDTO request
+    );
+
+    DailyDTO resetMySubmission(
+            Integer sessionId,
+            Integer utilisateurId
     );
 }

@@ -22,6 +22,7 @@ public class DailyContentDTO {
 
     private LocalDateTime creeA;
 
+
     private ParticipantDailyDTO participant;
 
     private UtilisateurDailyDTO utilisateur;

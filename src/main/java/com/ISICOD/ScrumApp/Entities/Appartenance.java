@@ -6,8 +6,18 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+
 @Entity
-@Table(name = "appartenance")
+@Table(
+        name = "appartenance",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_appartenance_utilisateur_espace",
+                        columnNames = {"utilisateur_id", "espace_id"}
+                )
+        }
+)
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,12 +35,12 @@ public class Appartenance {
     @Column(name = "role_attribue")
     private RoleEspace roleAttribue;
 
-    @ManyToOne
-    @JoinColumn(name = "utilisateur_id")
-    private Utilisateur utilisateur ;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "utilisateur_id", nullable = false)
+    private Utilisateur utilisateur;
 
-    @ManyToOne
-    @JoinColumn(name = "espace_id")
-    private Espace espace ;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "espace_id", nullable = false)
+    private Espace espace;
 
 }

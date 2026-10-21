@@ -17,6 +17,7 @@ public interface NotificationService {
 
     void deleteNotification(Integer id);
 
-    
+    Notification markAsRead(Integer notificationId, Integer utilisateurId);
 
+    int markAllAsRead(Integer utilisateurId);
 }

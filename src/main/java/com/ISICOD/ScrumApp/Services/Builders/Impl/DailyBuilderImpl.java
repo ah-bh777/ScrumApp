@@ -109,6 +109,10 @@ public class DailyBuilderImpl implements DailyBuilder {
 
     private UserStoryDailyDTO buildUserStory(SprintUserStory sprintUserStory) {
 
+        if (sprintUserStory == null) {
+            return null;
+        }
+
         return UserStoryDailyDTO.builder()
 
                 .sprintUserStoryId(sprintUserStory.getId())

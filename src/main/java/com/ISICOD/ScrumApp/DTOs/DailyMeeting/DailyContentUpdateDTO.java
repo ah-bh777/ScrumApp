@@ -13,6 +13,10 @@ public class DailyContentUpdateDTO {
 
     private Integer sprintUserStoryId;
 
+    // false/null: keep existing Story
+    // true: use sprintUserStoryId, including null to remove Story
+    private Boolean updateStory;
+
     private TypeDailyContent type;
 
     private String description;

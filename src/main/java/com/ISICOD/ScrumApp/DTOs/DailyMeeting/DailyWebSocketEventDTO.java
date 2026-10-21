@@ -18,4 +18,6 @@ public class DailyWebSocketEventDTO {
     private DailyParticipantDTO participant;
 
     private DailySessionDTO session;
+
+    private DailyStoryReservationDTO reservation;
 }

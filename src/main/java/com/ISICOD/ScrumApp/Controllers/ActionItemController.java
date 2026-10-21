@@ -1,6 +1,7 @@
 package com.ISICOD.ScrumApp.Controllers;
 
 import com.ISICOD.ScrumApp.DTOs.ActionItem.ActionItemDetailsDTO;
+import com.ISICOD.ScrumApp.DTOs.ActionItem.ActionItemNavigationDTO;
 import com.ISICOD.ScrumApp.Entities.ActionItem;
 import com.ISICOD.ScrumApp.Services.ActionItemService;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +85,15 @@ public class ActionItemController {
 
         return ResponseEntity.ok(
                 actionItemService.getActionItemDetails(id)
+        );
+    }
+
+    @GetMapping("/{id}/navigation")
+    public ResponseEntity<ActionItemNavigationDTO> getNavigationContext(
+            @PathVariable Integer id
+    ) {
+        return ResponseEntity.ok(
+                actionItemService.getNavigationContext(id)
         );
     }
 }

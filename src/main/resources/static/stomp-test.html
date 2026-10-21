@@ -1,75 +1,338 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>STOMP Test</title>
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrum Platform - Notification WebSocket Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
 
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        input {
+            padding: 10px;
+            width: 100px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+
+        button {
+            padding: 11px 16px;
+            border: none;
+            border-radius: 6px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .disconnect {
+            background: #dc2626;
+        }
+
+        .status {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .notification {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #bfdbfe;
+            border-left: 4px solid #2563eb;
+            background: #eff6ff;
+            border-radius: 6px;
+        }
+
+        .notification p {
+            margin: 6px 0;
+        }
+
+        pre {
+            background: #111827;
+            color: #e5e7eb;
+            padding: 18px;
+            border-radius: 8px;
+            height: 280px;
+            overflow: auto;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
 <body>
 
-<h1>STOMP WebSocket Test</h1>
+<div class="container">
+    <h1>Scrum Platform - Real-Time Notifications</h1>
 
-<button onclick="connect()">Connect</button>
-<button onclick="subscribe()">Subscribe</button>
+    <div class="controls">
+        <label for="userId">User ID:</label>
+        <input type="number" id="userId" value="6" min="1">
 
-<pre id="output"></pre>
+        <button id="connectBtn" onclick="connect()">Connect</button>
+        <button id="subscribeBtn" onclick="subscribe()" disabled>Subscribe</button>
+        <button id="disconnectBtn" class="disconnect" onclick="disconnect()" disabled>
+            Disconnect
+        </button>
+    </div>
+
+    <div class="status" id="status">Status: Disconnected</div>
+
+    <h2>Received Notifications</h2>
+    <div id="notifications"></div>
+
+    <h2>WebSocket Logs</h2>
+    <pre id="output"></pre>
+</div>
 
 <script>
-
-    let socket;
+    let socket = null;
+    let stompConnected = false;
+    let currentSubscription = null;
+    let subscriptionCounter = 0;
 
     function log(message) {
-        document.getElementById("output").textContent += message + "\n";
+        const output = document.getElementById("output");
+        output.textContent += message + "\n";
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function setStatus(message) {
+        document.getElementById("status").textContent = "Status: " + message;
+    }
+
+    function updateButtons(connected) {
+        document.getElementById("connectBtn").disabled = connected;
+        document.getElementById("subscribeBtn").disabled = !connected;
+        document.getElementById("disconnectBtn").disabled = !connected;
+    }
+
+    function sendFrame(command, headers = {}, body = "") {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            log("WebSocket is not open");
+            return;
+        }
+
+        let frame = command + "\n";
+
+        for (const [key, value] of Object.entries(headers)) {
+            frame += key + ":" + value + "\n";
+        }
+
+        frame += "\n" + body + "\0";
+        socket.send(frame);
     }
 
     function connect() {
+        if (socket && (
+            socket.readyState === WebSocket.OPEN ||
+            socket.readyState === WebSocket.CONNECTING
+        )) {
+            log("Connection already exists");
+            return;
+        }
+
+        stompConnected = false;
+        currentSubscription = null;
+
+        setStatus("Connecting...");
+        document.getElementById("connectBtn").disabled = true;
 
         socket = new WebSocket("ws://localhost:8080/ws");
 
         socket.onopen = function () {
-
             log("WebSocket connected");
 
-            socket.send(
-                "CONNECT\n" +
-                "accept-version:1.2\n" +
-                "host:localhost\n" +
-                "\n" +
-                "\0"
-            );
+            sendFrame("CONNECT", {
+                "accept-version": "1.2",
+                "host": "localhost",
+                "heart-beat": "0,0"
+            });
         };
 
         socket.onmessage = function (event) {
+            const frames = event.data.split("\0");
 
-            log("RECEIVED:");
-            log(event.data);
+            for (const rawFrame of frames) {
+                const frame = rawFrame.trim();
+
+                if (!frame) {
+                    continue;
+                }
+
+                log("RECEIVED:\n" + frame);
+
+                if (frame.startsWith("CONNECTED")) {
+                    stompConnected = true;
+                    setStatus("STOMP Connected");
+                    updateButtons(true);
+                    log("STOMP connected successfully");
+                }
+
+                if (frame.startsWith("MESSAGE")) {
+                    handleNotification(frame);
+                }
+
+                if (frame.startsWith("RECEIPT")) {
+                    log("Subscription confirmed by broker");
+                }
+
+                if (frame.startsWith("ERROR")) {
+                    log("STOMP server error");
+                    setStatus("STOMP Error");
+                }
+            }
         };
 
         socket.onerror = function (error) {
-
-            log("ERROR");
-            console.log(error);
+            log("WebSocket error");
+            console.error(error);
         };
 
-        socket.onclose = function () {
+        socket.onclose = function (event) {
+            stompConnected = false;
+            currentSubscription = null;
+            socket = null;
 
-            log("WebSocket closed");
+            setStatus("Disconnected");
+            updateButtons(false);
+
+            log("WebSocket disconnected. Code: " + event.code);
         };
     }
 
     function subscribe() {
+        if (!socket || !stompConnected) {
+            log("Connect to STOMP first");
+            return;
+        }
 
-        socket.send(
-            "SUBSCRIBE\n" +
-            "id:sub-0\n" +
-            "destination:/topic/daily/5\n" +
-            "\n" +
-            "\0"
-        );
+        const userId = Number(document.getElementById("userId").value);
 
-        log("Subscribed to /topic/daily/4");
+        if (!Number.isInteger(userId) || userId <= 0) {
+            log("Enter a valid user ID");
+            return;
+        }
+
+        if (currentSubscription) {
+            sendFrame("UNSUBSCRIBE", {
+                "id": currentSubscription
+            });
+        }
+
+        subscriptionCounter++;
+
+        const subscriptionId = "sub-notifications-" + subscriptionCounter;
+        const destination = "/topic/notifications/" + userId;
+
+        sendFrame("SUBSCRIBE", {
+            "id": subscriptionId,
+            "destination": destination,
+            "ack": "auto",
+            "receipt": "receipt-" + subscriptionCounter
+        });
+
+        currentSubscription = subscriptionId;
+
+        log("Subscription requested: " + destination);
+        setStatus("Subscribed to user " + userId);
     }
 
+    function handleNotification(frame) {
+        const separator = frame.indexOf("\n\n");
+
+        if (separator === -1) {
+            log("Invalid STOMP message");
+            return;
+        }
+
+        const body = frame.substring(separator + 2);
+
+        try {
+            const notification = JSON.parse(body);
+
+            log("NEW NOTIFICATION:");
+            log(JSON.stringify(notification, null, 2));
+
+            displayNotification(notification);
+        } catch (error) {
+            log("Unable to parse notification: " + body);
+        }
+    }
+
+    function displayNotification(notification) {
+        const container = document.getElementById("notifications");
+        const element = document.createElement("div");
+
+        element.className = "notification";
+
+        const title = document.createElement("strong");
+        title.textContent = "Notification #" + notification.notificationId;
+
+        const description = document.createElement("p");
+        description.textContent = notification.description || "";
+
+        const details = document.createElement("p");
+
+        if (notification.actionItemId != null) {
+            details.textContent = "Action Item ID: " + notification.actionItemId;
+        } else if (notification.invitationId != null) {
+            details.textContent = "Invitation ID: " + notification.invitationId;
+        } else {
+            details.textContent = "General notification";
+        }
+
+        const timestamp = document.createElement("p");
+        timestamp.textContent = "Sent at: " + (notification.envoyeA || "");
+
+        element.appendChild(title);
+        element.appendChild(description);
+        element.appendChild(details);
+        element.appendChild(timestamp);
+
+        container.prepend(element);
+    }
+
+    function disconnect() {
+        if (!socket) {
+            return;
+        }
+
+        if (socket.readyState === WebSocket.OPEN && stompConnected) {
+            sendFrame("DISCONNECT");
+        }
+
+        socket.close();
+    }
 </script>
 
 </body>
